@@ -232,6 +232,35 @@
             background: var(--orange-accent);
             color: white;
         }
+
+        /* Death Experience Screen Styles */
+    .btn-option {
+    background: white;
+    color: var(--text-dark);
+    border: 2px solid var(--gray-light);
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Solway', serif;
+}
+
+.btn-option:hover {
+    border-color: var(--orange-accent);
+    transform: translateY(-2px);
+}
+
+.btn-option.selected {
+    background: var(--orange-accent);
+    color: white;
+    border-color: var(--orange-accent);
+}
+
+.form-group + .form-group {
+    margin-top: 2.5rem;
+}
         
         /* Question Screen Specific */
         .question-wrapper {
@@ -668,6 +697,88 @@
                 <button class="btn next-btn" id="demographicsNext" onclick="startQuestions()">Continue</button>
             </div>
         </div>
+
+        <!-- Death Experience Screen -->
+<div class="screen" id="deathExperienceScreen">
+    <div class="content">
+        <h2>Life Experiences</h2>
+        <p>Understanding your past experiences helps us provide more personalized insights</p>
+        
+        <!-- Question 1: Life threatening illness -->
+        <div class="form-group">
+            <label>Have you ever had a life threatening illness?</label>
+            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                <button class="btn-option" id="illness-yes" onclick="setDeathExperience('illness', true)">Yes</button>
+                <button class="btn-option" id="illness-no" onclick="setDeathExperience('illness', false)">No</button>
+            </div>
+        </div>
+        
+        <!-- Question 2: Close to someone with illness -->
+        <div class="form-group">
+            <label>Have you ever been emotionally close to someone who has had a life threatening illness?</label>
+            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                <button class="btn-option" id="closeIllness-yes" onclick="setDeathExperience('closeIllness', true)">Yes</button>
+                <button class="btn-option" id="closeIllness-no" onclick="setDeathExperience('closeIllness', false)">No</button>
+            </div>
+        </div>
+        
+        <!-- Follow-up: How close (only shown if yes) -->
+        <div class="form-group" id="closeIllnessScale" style="display: none;">
+            <label>How emotionally close were you to that person during their illness?</label>
+            <div class="likert-scale" style="margin-top: 20px;">
+                <span class="likert-label">Not close<br>at all</span>
+                <div class="likert-options">
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 1)">1</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 2)">2</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 3)">3</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 4)">4</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 5)">5</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 6)">6</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 7)">7</button>
+                </div>
+                <span class="likert-label">Extremely<br>close</span>
+            </div>
+        </div>
+        
+        <!-- Question 3: Close to dying -->
+        <div class="form-group">
+            <label>Have you ever been close to dying?</label>
+            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                <button class="btn-option" id="closeDying-yes" onclick="setDeathExperience('closeDying', true)">Yes</button>
+                <button class="btn-option" id="closeDying-no" onclick="setDeathExperience('closeDying', false)">No</button>
+            </div>
+        </div>
+        
+        <!-- Follow-up: How close to death -->
+        <div class="form-group" id="closeDyingScale" style="display: none;">
+            <label>How close to death did you come?</label>
+            <div class="likert-scale" style="margin-top: 20px;">
+                <span class="likert-label">Not very<br>close</span>
+                <div class="likert-options">
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 1)">1</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 2)">2</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 3)">3</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 4)">4</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 5)">5</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 6)">6</button>
+                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 7)">7</button>
+                </div>
+                <span class="likert-label">Extremely<br>close</span>
+            </div>
+        </div>
+        
+        <!-- Question 4: Seen someone die -->
+        <div class="form-group">
+            <label>Have you ever seen someone die?</label>
+            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                <button class="btn-option" id="seenDie-yes" onclick="setDeathExperience('seenDie', true)">Yes</button>
+                <button class="btn-option" id="seenDie-no" onclick="setDeathExperience('seenDie', false)">No</button>
+            </div>
+        </div>
+        
+        <button class="btn next-btn" id="deathExperienceNext" onclick="startQuestions()">Continue</button>
+    </div>
+</div>
         
         <!-- Question Screen -->
         <div class="screen" id="questionScreen">
@@ -996,6 +1107,14 @@
                 currentQuestion: 0,
                 responses: [],
                 demographics: {},
+                deathExperiences: {  // Add this
+            illness: null,
+            closeIllness: null,
+            closeIllnessLevel: null,
+            closeDying: null,
+            closeDyingLevel: null,
+            seenDie: null
+        },
                 selectedOption: null,
                 results: null,
                 sessionId: generateSessionId()
@@ -1016,6 +1135,125 @@
                 nextBtn.classList.remove('enabled');
             }
         }
+
+        // Start Questions (update this function)
+function startQuestions() {
+    // Check which screen we're coming from
+    if (appState.currentScreen === 'demographics') {
+        // Coming from demographics, go to death experience
+        if (!appState.demographics.age || !appState.demographics.sex) return;
+        
+        showScreen('deathExperience');
+        return;
+    }
+    
+    // Coming from death experience, check if complete
+    const de = appState.deathExperiences;
+    if (de.illness === null || de.closeIllness === null || de.closeDying === null || de.seenDie === null) {
+        return;
+    }
+    
+    // Start the actual questions
+    appState.currentQuestion = 0;
+    appState.responses = [];
+    appState.selectedOption = null;
+    
+    showScreen('question');
+    document.getElementById('progressContainer').classList.add('show');
+    displayQuestion();
+}
+
+        // Application State
+let appState = {
+    currentScreen: 'landing',
+    currentQuestion: 0,
+    responses: [],
+    demographics: {},
+    deathExperiences: {
+        illness: null,
+        closeIllness: null,
+        closeIllnessLevel: null,
+        closeDying: null,
+        closeDyingLevel: null,
+        seenDie: null
+    },
+    selectedOption: null,
+    results: null,
+    sessionId: null
+};
+        // Death Experience Functions
+function setDeathExperience(question, value) {
+    appState.deathExperiences[question] = value;
+    
+    // Update button states
+    document.getElementById(`${question}-yes`).classList.toggle('selected', value === true);
+    document.getElementById(`${question}-no`).classList.toggle('selected', value === false);
+    
+    // Show/hide follow-up scales
+    if (question === 'closeIllness') {
+        document.getElementById('closeIllnessScale').style.display = value ? 'block' : 'none';
+        if (!value) {
+            appState.deathExperiences.closeIllnessLevel = null;
+            // Clear any selected scale buttons
+            document.querySelectorAll('#closeIllnessScale .likert-option').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        }
+    }
+    
+    if (question === 'closeDying') {
+        document.getElementById('closeDyingScale').style.display = value ? 'block' : 'none';
+        if (!value) {
+            appState.deathExperiences.closeDyingLevel = null;
+            // Clear any selected scale buttons
+            document.querySelectorAll('#closeDyingScale .likert-option').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        }
+    }
+    
+    checkDeathExperienceCompletion();
+}
+
+function setDeathExperienceScale(scale, value) {
+    appState.deathExperiences[scale] = value;
+    
+    // Update button states
+    const container = scale === 'closeIllnessLevel' ? 'closeIllnessScale' : 'closeDyingScale';
+    document.querySelectorAll(`#${container} .likert-option`).forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    document.querySelector(`#${container} .likert-option:nth-child(${value})`).classList.add('selected');
+    
+    checkDeathExperienceCompletion();
+}
+
+function checkDeathExperienceCompletion() {
+    const de = appState.deathExperiences;
+    let isComplete = true;
+    
+    // Check all required fields
+    if (de.illness === null || de.closeIllness === null || de.closeDying === null || de.seenDie === null) {
+        isComplete = false;
+    }
+    
+    // Check follow-up questions if needed
+    if (de.closeIllness === true && de.closeIllnessLevel === null) {
+        isComplete = false;
+    }
+    if (de.closeDying === true && de.closeDyingLevel === null) {
+        isComplete = false;
+    }
+    
+    // Enable/disable continue button
+    const nextBtn = document.getElementById('deathExperienceNext');
+    if (isComplete) {
+        nextBtn.classList.add('enabled');
+    } else {
+        nextBtn.classList.remove('enabled');
+    }
+}
+
         
         // Start Questions
         function startQuestions() {
@@ -1118,6 +1356,7 @@
                 sessionId: appState.sessionId,
                 timestamp: new Date().toISOString(),
                 demographics: appState.demographics,
+                deathExperiences: appState.deathExperiences,
                 responses: appState.responses,
                 rawScores: results.rawScores,
                 standardizedScores: results.standardizedScores,
@@ -1179,11 +1418,7 @@
             }, 100);
         }
         
-        // Email Modal Functions
-        function showEmailModal() {
-            document.getElementById('emailModal').classList.add('show');
-        }
-        
+        // Email Modal Functions        
         function closeEmailModal() {
             document.getElementById('emailModal').classList.remove('show');
             document.getElementById('successMessage').classList.remove('show');
