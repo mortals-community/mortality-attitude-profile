@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover Your Mortality Archetype - Mortals</title>
+    <title>Discover your Mortality Type - Mortals</title>
     
     <!-- Google Fonts - Solway -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -629,8 +629,8 @@
         <!-- Landing Screen -->
         <div class="screen active" id="landingScreen">
             <div class="content">
-                <h1>Discover Your Mortality Archetype</h1>
-                <p>Explore your relationship with mortality through this research-based assessment. Your responses will reveal one of seven archetypes that describe how you engage with life's finite nature.</p>
+                <h1>Discover your Mortality Type</h1>
+                <p>Explore your relationship with mortality through this evidence-based assessment. Your responses will reveal one of seven types that describe how you engage with life's finite nature.</p>
                 <button class="btn" onclick="startAssessment()">Start Assessment</button>
             </div>
         </div>
@@ -642,7 +642,7 @@
                 <p>This helps us understand patterns across different groups</p>
                 
                 <div class="form-group">
-                    <label for="ageRange">Age Range</label>
+                    <label for="ageRange">Age range</label>
                     <select id="ageRange" onchange="checkDemographics()">
                         <option value="">Select your age range</option>
                         <option value="18-24">18-24</option>
@@ -701,19 +701,19 @@
             <div class="content">
                 <div class="results-container">
                     <div class="archetype-result">
-                        <h3>Your Mortality Archetype</h3>
-                        <h2 id="archetypeName">Your Archetype</h2>
+                        <h3>Your Mortality Attitude Type</h3>
+                        <h2 id="archetypeName">Your Type</h2>
                         <p id="archetypeDescription">Description will appear here</p>
                     </div>
                     
                     <div class="chart-container" id="chartContainer">
-                        <h3>Your Subscale Scores</h3>
+                        <h3>Your subscale scores</h3>
                         <!-- Charts will be dynamically inserted here -->
                     </div>
                     
                     <div class="button-group">
-                        <button class="btn" onclick="showEmailModal()">Email My Full Results</button>
-                        <button class="btn btn-secondary" onclick="startOver()">Take Again</button>
+                        <button class="btn" onclick="showEmailModal()">Email my full results</button>
+                        <button class="btn btn-secondary" onclick="startOver()">Take again</button>
                     </div>
                 </div>
             </div>
@@ -724,16 +724,16 @@
     <div class="modal" id="emailModal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeEmailModal()">&times;</button>
-            <h2>Get Your Full Results</h2>
-            <p>Enter your details to receive a comprehensive analysis of your mortality archetype and subscale scores.</p>
+            <h2>Get your full results</h2>
+            <p>Enter your details to receive an analysis of your mortality type and subscale scores.</p>
             
             <div class="form-group">
-                <label for="firstName">First Name</label>
+                <label for="firstName">First name</label>
                 <input type="text" id="firstName" placeholder="Enter your first name">
             </div>
             
             <div class="form-group">
-                <label for="email">Email Address</label>
+                <label for="email">Email address</label>
                 <input type="email" id="email" placeholder="Enter your email">
             </div>
             
@@ -748,7 +748,7 @@
                 Your data will be used for research purposes and to send you your results. We take your privacy seriously and will never sell or share your personal information with third parties.
             </p>
             
-            <button class="btn" id="sendEmailBtn" onclick="sendEmail()">Send Results</button>
+            <button class="btn" id="sendEmailBtn" onclick="sendEmail()">Send results</button>
             
             <div class="success-message" id="successMessage">
                 Results sent successfully! Check your email.
@@ -800,27 +800,27 @@
             
             subscales: {
                 LEG: { 
-                    name: "Mortality Legacy", 
+                    name: "Legacy", 
                     items: [5, 10, 11, 16, 21, 23, 30, 6, 32, 12],
                     description: "The need to create a legacy to live on beyond death"
                 },
                 FEAR: { 
-                    name: "Mortality Fearfulness", 
+                    name: "Fearfulness", 
                     items: [29, 14, 24, 27, 2, 31, 22, 17, 33, 1],
                     description: "Anxiety attached to the impossibility of escaping the end of one's life"
                 },
                 ACC: { 
-                    name: "Mortality Acceptance", 
+                    name: "Acceptance", 
                     items: [3, 35, 20, 25, 7],
                     description: "Integration of the emotional and physical reality of death"
                 },
                 Disemp: { 
-                    name: "Mortality Disempowerment", 
+                    name: "Disempowerment", 
                     items: [34, 9, 13, 15, 19, 28],
                     description: "Realization of personal insignificance and vulnerability in the face of death"
                 },
                 Diseng: { 
-                    name: "Mortality Disengagement", 
+                    name: "Disengagement", 
                     items: [8, 36, 26, 18, 4],
                     description: "Refusal to acknowledge death and a feeling of immortality"
                 }
@@ -838,37 +838,37 @@
                 "The Fearful Visionary": {
                     subscales: ["LEG", "FEAR"],
                     correlation: 0.399,
-                    description: "This archetype is focused on leaving a legacy but is held back by fear and anxiety. You have a vision for the future but struggle to take action to make it a reality."
+                    description: "This attitude type is focused on leaving a legacy but is held back by fear and anxiety. You have a vision for the future but struggle to take action to make it a reality."
                 },
                 "The Legacy Dreamer": {
                     subscales: ["LEG", "Disemp"],
                     correlation: 0.164,
-                    description: "This archetype is focused on leaving a legacy but feels disempowered to take action. You may struggle with feelings of hopelessness or self-doubt but are creative thinkers who can imagine a better future."
+                    description: "This attitude type is focused on leaving a legacy but feels disempowered to take action. You may struggle with feelings of hopelessness or self-doubt but are creative thinkers who can imagine a better future."
                 },
                 "The Mortality Denier": {
                     subscales: ["FEAR", "ACC"],
                     correlation: -0.267,
-                    description: "This archetype experiences inner conflict between fear and acceptance of mortality. You may oscillate between moments of acceptance and periods of anxiety, creating an ambivalent relationship with life's finite nature."
+                    description: "This attitude type experiences inner conflict between fear and acceptance of mortality. You may oscillate between moments of acceptance and periods of anxiety, creating an ambivalent relationship with life's finite nature."
                 },
                 "The Mortality Shadow": {
                     subscales: ["FEAR", "Disemp"],
                     correlation: 0.381,
-                    description: "This archetype is consumed by fear and feels powerless to change their situation. You may struggle with depression or other mental health issues and may feel like you are living in a shadow."
+                    description: "This attitude type is consumed by fear and feels powerless to change their situation. You may struggle with depression or other mental health issues and may feel like you are living in a shadow."
                 },
                 "The Mortality Drifter": {
                     subscales: ["FEAR", "Diseng"],
                     correlation: 0.208,
-                    description: "This archetype is disengaged from thinking about death and experiences fear when they do. Your fear of death makes you feel disconnected from others and prevents you from pursuing their goals, but you may have a creative side that is waiting to be expressed."
+                    description: "This attitude type is disengaged from thinking about death and experiences fear when they do. Your fear of death makes you feel disconnected from others and prevents you from pursuing their goals, but you may have a creative side that is waiting to be expressed."
                 },
                 "The Mortality Champion": {
                     subscales: ["ACC", "Disemp"],
                     correlation: -0.238,
-                    description: "This archetype demonstrates resilience in the face of mortality. Despite moments of feeling powerless, you maintain acceptance of life's finite nature, using this acceptance as a source of strength and empowerment."
+                    description: "This attitude type demonstrates resilience in the face of mortality. Despite moments of feeling powerless, you maintain acceptance of life's finite nature, using this acceptance as a source of strength and empowerment."
                 },
                 "The Legacy Weaver": {
                     subscales: ["LEG", "Diseng"],
                     correlation: 0.039,
-                    description: "This archetype is focused on weaving a lasting legacy that will outlast them. You are engaged in the present and use your time and resources to create something that will make a positive impact on the world."
+                    description: "This attitude type is focused on weaving a lasting legacy that will outlast them. You are engaged in the present and use your time and resources to create something that will make a positive impact on the world."
                 }
             },
             
@@ -1148,7 +1148,7 @@
         // Create Bar Charts
         function createBarCharts(rawScores) {
             const chartContainer = document.getElementById('chartContainer');
-            chartContainer.innerHTML = '<h3>Your Subscale Scores</h3>';
+            chartContainer.innerHTML = '<h3>Your subscale scores</h3>';
             
             const subscaleOrder = ['LEG', 'FEAR', 'ACC', 'Disemp', 'Diseng'];
             
