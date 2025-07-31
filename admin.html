@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAP Admin Dashboard - Mortality Attitude Profile</title>
+    
+    <!-- Google Fonts - Solway -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Solway:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        
+        // TODO: Replace with your Firebase config (same as main app)
+        const firebaseConfig = {
+        apiKey: "AIzaSyAvcg2qMytGsdjtSR3TJNvB2co1_elmmuk",
+        authDomain: "mortality-attitude-profile.firebaseapp.com",
+        databaseURL: "https://mortality-attitude-profile-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "mortality-attitude-profile",
+        storageBucket: "mortality-attitude-profile.firebasestorage.app",
+        messagingSenderId: "533303225736",
+        appId: "1:533303225736:web:6b0dc8f17fe95dd5659e3d",
+        measurementId: "G-VDVS16QL7Q"
+        };
+
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Make database available globally
+        window.firebaseDB = database;
+        window.firebaseRef = ref;
+        window.firebaseOnValue = onValue;
+        window.firebaseGet = get;
+    </script>
+    
+    <style>
+        :root {
+            --orange-accent: #FF6B35;
+            --blue-accent: #004E89;
+            --primary-white: #FFF7F3;
+            --primary-orange: #F7C59F;
+            --text-dark: #004E89;
+            --gray-light: #E0E0E0;
+            --gray-medium: #999;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Solway', serif;
+            background-color: var(--primary-white);
+            color: var(--text-dark);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            color: var(--orange-accent);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 78, 137, 0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--orange-accent);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-medium);
+            margin-top: 0.5rem;
+        }
+        
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 78, 137, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .btn {
+            background: var(--orange-accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Solway', serif;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #ff5722;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        th {
+            background: var(--primary-orange);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-medium);
+        }
+        
+        .auth-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 78, 137, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        input[type="password"] {
+            padding: 10px 16px;
+            font-size: 1rem;
+            border: 2px solid var(--gray-light);
+            border-radius: 8px;
+            margin-right: 10px;
+            font-family: 'Solway', serif;
+        }
+        
+        .error {
+            color: #d32f2f;
+            margin-top: 10px;
+        }
+        
+        .archetype-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 1rem;
+        }
+        
+        .archetype-item {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .archetype-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .archetype-count {
+            font-weight: 700;
+            color: var(--orange-accent);
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MAP Admin Dashboard</h1>
+        
+        <!-- Auth Section -->
+        <div class="auth-section" id="authSection">
+            <h2>Admin Login</h2>
+            <p>Enter the admin password to access the dashboard</p>
+            <br>
+            <input type="password" id="passwordInput" placeholder="Enter password" onkeypress="if(event.key==='Enter') login()">
+            <button class="btn" onclick="login()">Login</button>
+            <div class="error" id="authError"></div>
+        </div>
+        
+        <!-- Dashboard (hidden until authenticated) -->
+        <div id="dashboard" style="display: none;">
+            <!-- Statistics -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalResponses">0</div>
+                    <div class="stat-label">Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="emailsCollected">0</div>
+                    <div class="stat-label">Emails Collected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completionRate">0%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgLegacy">0</div>
+                    <div class="stat-label">Avg Legacy Score</div>
+                </div>
+            </div>
+            
+            <!-- Archetype Breakdown -->
+            <div class="section">
+                <h2>Archetype Distribution</h2>
+                <div class="archetype-breakdown" id="archetypeBreakdown">
+                    <div class="loading">Loading archetype data...</div>
+                </div>
+            </div>
+            
+            <!-- Recent Responses -->
+            <div class="section">
+                <h2>Recent Responses</h2>
+                <div style="overflow-x: auto;">
+                    <table id="responsesTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Age</th>
+                                <th>Sex</th>
+                                <th>Archetype</th>
+                                <th>Legacy</th>
+                                <th>Fear</th>
+                                <th>Accept</th>
+                                <th>Disemp</th>
+                                <th>Diseng</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsesBody">
+                            <tr><td colspan="10" class="loading">Loading responses...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Export Options -->
+            <div class="section">
+                <h2>Export Data</h2>
+                <p>Download all response data in CSV format for analysis</p>
+                <br>
+                <button class="btn" onclick="exportAllData()">Export All Data (CSV)</button>
+                <button class="btn" onclick="exportEmailList()">Export Email List</button>
+                <button class="btn" onclick="exportSummaryStats()">Export Summary Stats</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simple password protection (in production, use proper authentication)
+        const ADMIN_PASSWORD = 'Alba2021!'; // Change this!
+        
+        let allResponses = [];
+        let emailData = {};
+        
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('authError');
+            
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDashboard();
+            } else {
+                errorEl.textContent = 'Incorrect password. Please try again.';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        async function loadDashboard() {
+            if (!window.firebaseDB) {
+                alert('Firebase not initialized. Please check your configuration.');
+                return;
+            }
+            
+            try {
+                // Load responses
+                const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
+                const responsesSnapshot = await window.firebaseGet(responsesRef);
+                
+                if (responsesSnapshot.exists()) {
+                    const responsesData = responsesSnapshot.val();
+                    allResponses = Object.entries(responsesData).map(([key, value]) => ({
+                        id: key,
+                        ...value
+                    }));
+                    
+                    // Sort by timestamp (newest first)
+                    allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                }
+                
+                // Load email data
+                const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
+                const emailSnapshot = await window.firebaseGet(emailRef);
+                
+                if (emailSnapshot.exists()) {
+                    emailData = emailSnapshot.val();
+                }
+                
+                // Update UI
+                updateStatistics();
+                updateArchetypeBreakdown();
+                updateResponsesTable();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading data. Please check the console.');
+            }
+        }
+        
+        function updateStatistics() {
+            // Total responses
+            document.getElementById('totalResponses').textContent = allResponses.length;
+            
+            // Emails collected
+            const emailCount = Object.keys(emailData).length;
+            document.getElementById('emailsCollected').textContent = emailCount;
+            
+            // Completion rate (assuming all stored responses are complete)
+            const completionRate = allResponses.length > 0 ? '100%' : '0%';
+            document.getElementById('completionRate').textContent = completionRate;
+            
+            // Average Legacy score
+            if (allResponses.length > 0) {
+                const avgLegacy = allResponses.reduce((sum, r) => sum + (r.rawScores?.LEG || 0), 0) / allResponses.length;
+                document.getElementById('avgLegacy').textContent = avgLegacy.toFixed(2);
+            }
+        }
+        
+        function updateArchetypeBreakdown() {
+            const archetypeCounts = {};
+            
+            allResponses.forEach(response => {
+                const archetype = response.archetype || 'Unknown';
+                archetypeCounts[archetype] = (archetypeCounts[archetype] || 0) + 1;
+            });
+            
+            const breakdownHtml = Object.entries(archetypeCounts)
+                .sort((a, b) => b[1] - a[1])
+                .map(([archetype, count]) => `
+                    <div class="archetype-item">
+                        <span class="archetype-name">${archetype}</span>
+                        <span class="archetype-count">${count}</span>
+                    </div>
+                `).join('');
+            
+            document.getElementById('archetypeBreakdown').innerHTML = breakdownHtml || '<p>No data available</p>';
+        }
+        
+        function updateResponsesTable() {
+            const tbody = document.getElementById('responsesBody');
+            
+            if (allResponses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="loading">No responses yet</td></tr>';
+                return;
+            }
+            
+            // Show last 20 responses
+            const recentResponses = allResponses.slice(0, 20);
+            
+            const rows = recentResponses.map(response => {
+                const email = emailData[response.sessionId];
+                const date = new Date(response.timestamp).toLocaleDateString();
+                
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${response.demographics?.age || '-'}</td>
+                        <td>${response.demographics?.sex || '-'}</td>
+                        <td>${response.archetype || '-'}</td>
+                        <td>${response.rawScores?.LEG?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.FEAR?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.ACC?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.Disemp?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.Diseng?.toFixed(2) || '-'}</td>
+                        <td>${email?.email || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows;
+        }
+        
+        function exportAllData() {
+            if (allResponses.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            // Prepare CSV data
+            const headers = [
+                'Timestamp', 'Session ID', 'Age', 'Sex', 'Archetype',
+                'LEG_Raw', 'FEAR_Raw', 'ACC_Raw', 'Disemp_Raw', 'Diseng_Raw',
+                'LEG_Std', 'FEAR_Std', 'ACC_Std', 'Disemp_Std', 'Diseng_Std',
+                'Email', 'First Name', 'Email Consent',
+                ...Array.from({length: 36}, (_, i) => `Q${i + 1}`)
+            ];
+            
+            const rows = allResponses.map(response => {
+                const email = emailData[response.sessionId] || {};
+                
+                return [
+                    response.timestamp,
+                    response.sessionId,
+                    response.demographics?.age || '',
+                    response.demographics?.sex || '',
+                    response.archetype || '',
+                    response.rawScores?.LEG || '',
+                    response.rawScores?.FEAR || '',
+                    response.rawScores?.ACC || '',
+                    response.rawScores?.Disemp || '',
+                    response.rawScores?.Diseng || '',
+                    response.standardizedScores?.LEG || '',
+                    response.standardizedScores?.FEAR || '',
+                    response.standardizedScores?.ACC || '',
+                    response.standardizedScores?.Disemp || '',
+                    response.standardizedScores?.Diseng || '',
+                    email.email || '',
+                    email.firstName || '',
+                    email.emailConsent || '',
+                    ...(response.responses || [])
+                ];
+            });
+            
+            downloadCSV(headers, rows, 'MAP_all_responses.csv');
+        }
+        
+        function exportEmailList() {
+            const emailEntries = Object.values(emailData).filter(e => e.email);
+            
+            if (emailEntries.length === 0) {
+                alert('No email data to export');
+                return;
+            }
+            
+            const headers = ['Email', 'First Name', 'Consent', 'Date'];
+            const rows = emailEntries.map(entry => [
+                entry.email,
+                entry.firstName,
+                entry.emailConsent ? 'Yes' : 'No',
+                entry.emailedAt
+            ]);
+            
+            downloadCSV(headers, rows, 'MAP_email_list.csv');
+        }
+        
+        function exportSummaryStats() {
+            if (allResponses.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            // Calculate summary statistics
+            const subscales = ['LEG', 'FEAR', 'ACC', 'Disemp', 'Diseng'];
+            const stats = {};
+            
+            subscales.forEach(subscale => {
+                const scores = allResponses.map(r => r.rawScores?.[subscale] || 0).filter(s => s > 0);
+                stats[subscale] = {
+                    mean: scores.reduce((a, b) => a + b, 0) / scores.length,
+                    min: Math.min(...scores),
+                    max: Math.max(...scores),
+                    count: scores.length
+                };
+            });
+            
+            const headers = ['Subscale', 'Mean', 'Min', 'Max', 'N'];
+            const rows = subscales.map(subscale => [
+                subscale,
+                stats[subscale].mean.toFixed(3),
+                stats[subscale].min.toFixed(3),
+                stats[subscale].max.toFixed(3),
+                stats[subscale].count
+            ]);
+            
+            downloadCSV(headers, rows, 'MAP_summary_stats.csv');
+        }
+        
+        function downloadCSV(headers, rows, filename) {
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Check if Firebase is loaded
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (!window.firebaseDB) {
+                    alert('Firebase not configured. Please add your Firebase configuration.');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>-number" id="totalResponses">0</div>
+                    <div class="stat-label">Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="emailsCollected">0</div>
+                    <div class="stat-label">Emails Collected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat
