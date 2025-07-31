@@ -1144,7 +1144,7 @@
             }
         }
 
-        // Start Questions (update this function)
+        // Start Questions
 function startQuestions() {
     // Check which screen we're coming from
     if (appState.currentScreen === 'demographics') {
@@ -1242,20 +1242,6 @@ function checkDeathExperienceCompletion() {
         nextBtn.classList.remove('enabled');
     }
 }
-
-        
-        // Start Questions
-        function startQuestions() {
-            if (!appState.demographics.age || !appState.demographics.sex) return;
-            
-            appState.currentQuestion = 0;
-            appState.responses = [];
-            appState.selectedOption = null;
-            
-            showScreen('question');
-            document.getElementById('progressContainer').classList.add('show');
-            displayQuestion();
-        }
         
         // Display Current Question
         function displayQuestion() {
