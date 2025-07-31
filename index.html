@@ -1065,6 +1065,14 @@
             currentQuestion: 0,
             responses: [],
             demographics: {},
+            deathExperiences: {
+        illness: null,
+        closeIllness: null,
+        closeIllnessLevel: null,
+        closeDying: null,
+        closeDyingLevel: null,
+        seenDie: null
+    },
             selectedOption: null,
             results: null,
             sessionId: null
@@ -1162,25 +1170,6 @@ function startQuestions() {
     document.getElementById('progressContainer').classList.add('show');
     displayQuestion();
 }
-
-        // Application State
-let appState = {
-    currentScreen: 'landing',
-    currentQuestion: 0,
-    responses: [],
-    demographics: {},
-    deathExperiences: {
-        illness: null,
-        closeIllness: null,
-        closeIllnessLevel: null,
-        closeDying: null,
-        closeDyingLevel: null,
-        seenDie: null
-    },
-    selectedOption: null,
-    results: null,
-    sessionId: null
-};
         // Death Experience Functions
 function setDeathExperience(question, value) {
     appState.deathExperiences[question] = value;
