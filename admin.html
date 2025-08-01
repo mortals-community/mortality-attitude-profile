@@ -345,24 +345,33 @@
     </div>
     
     <script>
-        const ADMIN_PASSWORD_HASH = '94c120c85989d0f814f659e042c456628b3e29bcb91818e039739fbced24f871'; // Replace with your hash
-        
-        let allResponses = [];
-        let emailData = {};
-        
-        function login() {
-            const password = document.getElementById('passwordInput').value;
-            const errorEl = document.getElementById('authError');
-            
-            if (password === ADMIN_PASSWORD) {
-                document.getElementById('authSection').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadDashboard();
-            } else {
-                errorEl.textContent = 'Incorrect password. Please try again.';
-                document.getElementById('passwordInput').value = '';
-            }
-        }
+        // Store the hash instead of the plain password
+const ADMIN_PASSWORD_HASH = '94c120c85989d0f814f659e042c456628b3e29bcb91818e039739fbced24f871'; // You need to replace this!
+
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function login() {
+    const password = document.getElementById('passwordInput').value;
+    const errorEl = document.getElementById('authError');
+    
+    // Hash the entered password
+    const hashedPassword = await hashPassword(password);
+    
+    if (hashedPassword === ADMIN_PASSWORD_HASH) {
+        document.getElementById('authSection').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadDashboard();
+    } else {
+        errorEl.textContent = 'Incorrect password. Please try again.';
+        document.getElementById('passwordInput').value = '';
+    }
+}
         
         async function loadDashboard() {
     if (!window.firebaseDB) {
