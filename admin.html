@@ -273,9 +273,9 @@
             
             <!-- Archetype Breakdown -->
             <div class="section">
-                <h2>Archetype Distribution</h2>
+                <h2>Attitude Type Distribution</h2>
                 <div class="archetype-breakdown" id="archetypeBreakdown">
-                    <div class="loading">Loading archetype data...</div>
+                    <div class="loading">Loading type data...</div>
                 </div>
             </div>
 
@@ -316,7 +316,7 @@
         <th>Close to Ill</th>
         <th>Near Death</th>
         <th>Seen Death</th>
-        <th>Archetype</th>
+        <th>Type</th>
         <th>Legacy</th>
         <th>Fear</th>
         <th>Accept</th>
@@ -346,7 +346,7 @@
     
     <script>
         // Simple password protection (in production, use proper authentication)
-        const ADMIN_PASSWORD = 'Alba2021!'; // Change this!
+        const ADMIN_PASSWORD_HASH = '94c120c85989d0f814f659e042c456628b3e29bcb91818e039739fbced24f871'; // Replace with your hash
         
         let allResponses = [];
         let emailData = {};
@@ -524,7 +524,7 @@
         'Timestamp', 'Session ID', 'Age', 'Sex', 
         'Had Life Threatening Illness', 'Close to Ill Person', 'Closeness Level (1-7)', 
         'Close to Dying', 'How Close to Death (1-7)', 'Seen Someone Die',
-        'Archetype',
+        'Type',
         'LEG_Raw', 'FEAR_Raw', 'ACC_Raw', 'Disemp_Raw', 'Diseng_Raw',
         'LEG_Std', 'FEAR_Std', 'ACC_Std', 'Disemp_Std', 'Diseng_Std',
         'Email', 'First Name', 'Email Consent',
