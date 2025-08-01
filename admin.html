@@ -13,30 +13,36 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         
-        // TODO: Replace with your Firebase config (same as main app)
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-        apiKey: "AIzaSyAvcg2qMytGsdjtSR3TJNvB2co1_elmmuk",
-        authDomain: "mortality-attitude-profile.firebaseapp.com",
-        databaseURL: "https://mortality-attitude-profile-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "mortality-attitude-profile",
-        storageBucket: "mortality-attitude-profile.firebasestorage.app",
-        messagingSenderId: "533303225736",
-        appId: "1:533303225736:web:6b0dc8f17fe95dd5659e3d",
-        measurementId: "G-VDVS16QL7Q"
+            apiKey: "AIzaSyAvcg2qMytGsdjtSR3TJNvB2co1_elmmuk",
+            authDomain: "mortality-attitude-profile.firebaseapp.com",
+            databaseURL: "https://mortality-attitude-profile-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "mortality-attitude-profile",
+            storageBucket: "mortality-attitude-profile.firebasestorage.app",
+            messagingSenderId: "533303225736",
+            appId: "1:533303225736:web:6b0dc8f17fe95dd5659e3d",
+            measurementId: "G-VDVS16QL7Q"
         };
-
         
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+        const auth = getAuth(app);
         
-        // Make database available globally
+        // Make database and auth available globally
         window.firebaseDB = database;
         window.firebaseRef = ref;
         window.firebaseOnValue = onValue;
         window.firebaseGet = get;
+        window.firebaseSet = set;
+        window.firebaseAuth = auth;
+        window.firebaseSignIn = signInWithEmailAndPassword;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+        window.firebaseSignOut = signOut;
     </script>
     
     <style>
@@ -66,6 +72,16 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 16px;
+            font-size: 1rem;
+            border: 2px solid var(--gray-light);
+            border-radius: 8px;
+            font-family: 'Solway', serif;
+            display: block;
         }
         
         h1 {
@@ -142,6 +158,17 @@
             cursor: not-allowed;
         }
         
+        .btn-secondary {
+            background: transparent;
+            color: var(--orange-accent);
+            border: 2px solid var(--orange-accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--orange-accent);
+            color: white;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -179,7 +206,7 @@
             text-align: center;
         }
         
-        input[type="password"] {
+        input[type="password"], input[type="email"] {
             padding: 10px 16px;
             font-size: 1rem;
             border: 2px solid var(--gray-light);
@@ -242,15 +269,22 @@
         <!-- Auth Section -->
         <div class="auth-section" id="authSection">
             <h2>Admin Login</h2>
-            <p>Enter the admin password to access the dashboard</p>
+            <p>Sign in with your admin credentials</p>
             <br>
-            <input type="password" id="passwordInput" placeholder="Enter password" onkeypress="if(event.key==='Enter') login()">
+            <div class="form-group" style="max-width: 300px; margin: 0 auto;">
+                <input type="email" id="emailInput" placeholder="Admin email" style="margin-bottom: 10px;">
+                <input type="password" id="passwordInput" placeholder="Password" onkeypress="if(event.key==='Enter') login()">
+            </div>
             <button class="btn" onclick="login()">Login</button>
             <div class="error" id="authError"></div>
         </div>
         
         <!-- Dashboard (hidden until authenticated) -->
         <div id="dashboard" style="display: none;">
+            <div style="text-align: right; margin-bottom: 20px;">
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+            
             <!-- Statistics -->
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
@@ -280,27 +314,27 @@
             </div>
 
             <!-- Death Experience Summary -->
-<div class="section">
-    <h2>Death Experience Summary</h2>
-    <div class="stats-grid" id="deathExperienceStats">
-        <div class="stat-card">
-            <div class="stat-number" id="hadIllness">0%</div>
-            <div class="stat-label">Had Life-Threatening Illness</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="closeToIll">0%</div>
-            <div class="stat-label">Close to Someone Ill</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="nearDeath">0%</div>
-            <div class="stat-label">Been Near Death</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="seenDeath">0%</div>
-            <div class="stat-label">Witnessed Death</div>
-        </div>
-    </div>
-</div>
+            <div class="section">
+                <h2>Death Experience Summary</h2>
+                <div class="stats-grid" id="deathExperienceStats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="hadIllness">0%</div>
+                        <div class="stat-label">Had Life-Threatening Illness</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="closeToIll">0%</div>
+                        <div class="stat-label">Close to Someone Ill</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="nearDeath">0%</div>
+                        <div class="stat-label">Been Near Death</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="seenDeath">0%</div>
+                        <div class="stat-label">Witnessed Death</div>
+                    </div>
+                </div>
+            </div>
             
             <!-- Recent Responses -->
             <div class="section">
@@ -308,25 +342,25 @@
                 <div style="overflow-x: auto;">
                     <table id="responsesTable">
                         <thead>
-                                <tr>
-        <th>Date</th>
-        <th>Age</th>
-        <th>Sex</th>
-        <th>Life Threat</th>
-        <th>Close to Ill</th>
-        <th>Near Death</th>
-        <th>Seen Death</th>
-        <th>Type</th>
-        <th>Legacy</th>
-        <th>Fear</th>
-        <th>Accept</th>
-        <th>Disemp</th>
-        <th>Diseng</th>
-        <th>Email</th>
-    </tr>
+                            <tr>
+                                <th>Date</th>
+                                <th>Age</th>
+                                <th>Sex</th>
+                                <th>Life Threat</th>
+                                <th>Close to Ill</th>
+                                <th>Near Death</th>
+                                <th>Seen Death</th>
+                                <th>Type</th>
+                                <th>Legacy</th>
+                                <th>Fear</th>
+                                <th>Accept</th>
+                                <th>Disemp</th>
+                                <th>Diseng</th>
+                                <th>Email</th>
+                            </tr>
                         </thead>
                         <tbody id="responsesBody">
-                            <tr><td colspan="10" class="loading">Loading responses...</td></tr>
+                            <tr><td colspan="14" class="loading">Loading responses...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -345,75 +379,102 @@
     </div>
     
     <script>
-        // Store the hash instead of the plain password
-const ADMIN_PASSWORD_HASH = '94c120c85989d0f814f659e042c456628b3e29bcb91818e039739fbced24f871'; // You need to replace this!
+        // Global variables
+        let allResponses = [];
+        let emailData = {};
+        
+        async function logout() {
+            try {
+                await window.firebaseSignOut(window.firebaseAuth);
+                location.reload();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+        async function login() {
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('authError');
+            
+            if (!email || !password) {
+                errorEl.textContent = 'Please enter both email and password.';
+                return;
+            }
+            
+            try {
+                // Sign in with Firebase Auth
+                const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
+                console.log('Logged in successfully:', userCredential.user.email);
+                
+                // Auth state observer will handle showing the dashboard
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                errorEl.textContent = 'Invalid email or password.';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
 
-async function hashPassword(password) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function login() {
-    const password = document.getElementById('passwordInput').value;
-    const errorEl = document.getElementById('authError');
-    
-    // Hash the entered password
-    const hashedPassword = await hashPassword(password);
-    
-    if (hashedPassword === ADMIN_PASSWORD_HASH) {
-        document.getElementById('authSection').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        loadDashboard();
-    } else {
-        errorEl.textContent = 'Incorrect password. Please try again.';
-        document.getElementById('passwordInput').value = '';
-    }
-}
+        // Add auth state observer
+        window.addEventListener('load', () => {
+            window.firebaseOnAuthStateChanged(window.firebaseAuth, (user) => {
+                if (user) {
+                    // User is signed in
+                    console.log('User is signed in:', user.email);
+                    document.getElementById('authSection').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    loadDashboard();
+                } else {
+                    // User is signed out
+                    console.log('User is signed out');
+                    document.getElementById('authSection').style.display = 'block';
+                    document.getElementById('dashboard').style.display = 'none';
+                }
+            });
+        });
         
         async function loadDashboard() {
-    if (!window.firebaseDB) {
-        alert('Firebase not initialized. Please check your configuration.');
-        return;
-    }
-    
-    try {
-        // Load responses
-        const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
-        const responsesSnapshot = await window.firebaseGet(responsesRef);
-        
-        if (responsesSnapshot.exists()) {
-            const responsesData = responsesSnapshot.val();
-            allResponses = Object.entries(responsesData).map(([key, value]) => ({
-                id: key,
-                ...value
-            }));
+            if (!window.firebaseDB) {
+                alert('Firebase not initialized. Please check your configuration.');
+                return;
+            }
             
-            // Sort by timestamp (newest first)
-            allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            try {
+                // Load responses
+                const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
+                const responsesSnapshot = await window.firebaseGet(responsesRef);
+                
+                if (responsesSnapshot.exists()) {
+                    const responsesData = responsesSnapshot.val();
+                    allResponses = Object.entries(responsesData).map(([key, value]) => ({
+                        id: key,
+                        ...value
+                    }));
+                    
+                    // Sort by timestamp (newest first)
+                    allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                }
+                
+                // Load email data
+                const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
+                const emailSnapshot = await window.firebaseGet(emailRef);
+                
+                if (emailSnapshot.exists()) {
+                    emailData = emailSnapshot.val();
+                }
+                
+                // Update UI
+                updateStatistics();
+                updateDeathExperienceStats();
+                updateArchetypeBreakdown();
+                updateResponsesTable();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('Error loading data. Please check the console.');
+            }
         }
-        
-        // Load email data
-        const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
-        const emailSnapshot = await window.firebaseGet(emailRef);
-        
-        if (emailSnapshot.exists()) {
-            emailData = emailSnapshot.val();
-        }
-        
-        // Update UI
-        updateStatistics();
-        updateDeathExperienceStats();  // <-- ADD THIS LINE HERE
-        updateArchetypeBreakdown();
-        updateResponsesTable();
-        
-    } catch (error) {
-        console.error('Error loading data:', error);
-        alert('Error loading data. Please check the console.');
-    }
-}
         
         function updateStatistics() {
             // Total responses
@@ -435,24 +496,24 @@ async function login() {
         }
 
         function updateDeathExperienceStats() {
-    if (allResponses.length === 0) return;
-    
-    let hadIllness = 0, closeToIll = 0, nearDeath = 0, seenDeathCount = 0;
-    
-    allResponses.forEach(response => {
-        const de = response.deathExperiences || {};
-        if (de.illness === true) hadIllness++;
-        if (de.closeIllness === true) closeToIll++;
-        if (de.closeDying === true) nearDeath++;
-        if (de.seenDie === true) seenDeathCount++;
-    });
-    
-    const total = allResponses.length;
-    document.getElementById('hadIllness').textContent = Math.round((hadIllness / total) * 100) + '%';
-    document.getElementById('closeToIll').textContent = Math.round((closeToIll / total) * 100) + '%';
-    document.getElementById('nearDeath').textContent = Math.round((nearDeath / total) * 100) + '%';
-    document.getElementById('seenDeath').textContent = Math.round((seenDeathCount / total) * 100) + '%';
-}
+            if (allResponses.length === 0) return;
+            
+            let hadIllness = 0, closeToIll = 0, nearDeath = 0, seenDeathCount = 0;
+            
+            allResponses.forEach(response => {
+                const de = response.deathExperiences || {};
+                if (de.illness === true) hadIllness++;
+                if (de.closeIllness === true) closeToIll++;
+                if (de.closeDying === true) nearDeath++;
+                if (de.seenDie === true) seenDeathCount++;
+            });
+            
+            const total = allResponses.length;
+            document.getElementById('hadIllness').textContent = Math.round((hadIllness / total) * 100) + '%';
+            document.getElementById('closeToIll').textContent = Math.round((closeToIll / total) * 100) + '%';
+            document.getElementById('nearDeath').textContent = Math.round((nearDeath / total) * 100) + '%';
+            document.getElementById('seenDeath').textContent = Math.round((seenDeathCount / total) * 100) + '%';
+        }
         
         function updateArchetypeBreakdown() {
             const archetypeCounts = {};
@@ -475,107 +536,107 @@ async function login() {
         }
         
         function updateResponsesTable() {
-    const tbody = document.getElementById('responsesBody');
-    
-    if (allResponses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="14" class="loading">No responses yet</td></tr>';
-        return;
-    }
-    
-    // Show last 20 responses
-    const recentResponses = allResponses.slice(0, 20);
-    
-    const rows = recentResponses.map(response => {
-        const email = emailData[response.sessionId];
-        const date = new Date(response.timestamp).toLocaleDateString();
-        const de = response.deathExperiences || {};
-        
-        // Format death experience data
-        const lifeThread = de.illness !== null ? (de.illness ? 'Yes' : 'No') : '-';
-        const closeIll = de.closeIllness !== null ? 
-            (de.closeIllness ? `Yes (${de.closeIllnessLevel || 'N/A'})` : 'No') : '-';
-        const nearDeath = de.closeDying !== null ? 
-            (de.closeDying ? `Yes (${de.closeDyingLevel || 'N/A'})` : 'No') : '-';
-        const seenDeath = de.seenDie !== null ? (de.seenDie ? 'Yes' : 'No') : '-';
-        
-        return `
-            <tr>
-                <td>${date}</td>
-                <td>${response.demographics?.age || '-'}</td>
-                <td>${response.demographics?.sex || '-'}</td>
-                <td>${lifeThread}</td>
-                <td>${closeIll}</td>
-                <td>${nearDeath}</td>
-                <td>${seenDeath}</td>
-                <td>${response.archetype || '-'}</td>
-                <td>${response.rawScores?.LEG?.toFixed(2) || '-'}</td>
-                <td>${response.rawScores?.FEAR?.toFixed(2) || '-'}</td>
-                <td>${response.rawScores?.ACC?.toFixed(2) || '-'}</td>
-                <td>${response.rawScores?.Disemp?.toFixed(2) || '-'}</td>
-                <td>${response.rawScores?.Diseng?.toFixed(2) || '-'}</td>
-                <td>${email?.email || '-'}</td>
-            </tr>
-        `;
-    }).join('');
-    
-    tbody.innerHTML = rows;
-}
+            const tbody = document.getElementById('responsesBody');
+            
+            if (allResponses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="14" class="loading">No responses yet</td></tr>';
+                return;
+            }
+            
+            // Show last 20 responses
+            const recentResponses = allResponses.slice(0, 20);
+            
+            const rows = recentResponses.map(response => {
+                const email = emailData[response.sessionId];
+                const date = new Date(response.timestamp).toLocaleDateString();
+                const de = response.deathExperiences || {};
+                
+                // Format death experience data
+                const lifeThread = de.illness !== null ? (de.illness ? 'Yes' : 'No') : '-';
+                const closeIll = de.closeIllness !== null ? 
+                    (de.closeIllness ? `Yes (${de.closeIllnessLevel || 'N/A'})` : 'No') : '-';
+                const nearDeath = de.closeDying !== null ? 
+                    (de.closeDying ? `Yes (${de.closeDyingLevel || 'N/A'})` : 'No') : '-';
+                const seenDeath = de.seenDie !== null ? (de.seenDie ? 'Yes' : 'No') : '-';
+                
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${response.demographics?.age || '-'}</td>
+                        <td>${response.demographics?.sex || '-'}</td>
+                        <td>${lifeThread}</td>
+                        <td>${closeIll}</td>
+                        <td>${nearDeath}</td>
+                        <td>${seenDeath}</td>
+                        <td>${response.archetype || '-'}</td>
+                        <td>${response.rawScores?.LEG?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.FEAR?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.ACC?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.Disemp?.toFixed(2) || '-'}</td>
+                        <td>${response.rawScores?.Diseng?.toFixed(2) || '-'}</td>
+                        <td>${email?.email || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows;
+        }
         
         function exportAllData() {
-    if (allResponses.length === 0) {
-        alert('No data to export');
-        return;
-    }
-    
-    // Prepare CSV data
-    const headers = [
-        'Timestamp', 'Session ID', 'Age', 'Sex', 
-        'Had Life Threatening Illness', 'Close to Ill Person', 'Closeness Level (1-7)', 
-        'Close to Dying', 'How Close to Death (1-7)', 'Seen Someone Die',
-        'Type',
-        'LEG_Raw', 'FEAR_Raw', 'ACC_Raw', 'Disemp_Raw', 'Diseng_Raw',
-        'LEG_Std', 'FEAR_Std', 'ACC_Std', 'Disemp_Std', 'Diseng_Std',
-        'Email', 'First Name', 'Email Consent',
-        ...Array.from({length: 36}, (_, i) => `Q${i + 1}`)
-    ];
-    
-    const rows = allResponses.map(response => {
-        const email = emailData[response.sessionId] || {};
-        const de = response.deathExperiences || {};
-        
-        return [
-            response.timestamp,
-            response.sessionId,
-            response.demographics?.age || '',
-            response.demographics?.sex || '',
-            // Death experience data
-            de.illness !== null ? (de.illness ? 'Yes' : 'No') : '',
-            de.closeIllness !== null ? (de.closeIllness ? 'Yes' : 'No') : '',
-            de.closeIllnessLevel || '',
-            de.closeDying !== null ? (de.closeDying ? 'Yes' : 'No') : '',
-            de.closeDyingLevel || '',
-            de.seenDie !== null ? (de.seenDie ? 'Yes' : 'No') : '',
-            // Rest of data
-            response.archetype || '',
-            response.rawScores?.LEG || '',
-            response.rawScores?.FEAR || '',
-            response.rawScores?.ACC || '',
-            response.rawScores?.Disemp || '',
-            response.rawScores?.Diseng || '',
-            response.standardizedScores?.LEG || '',
-            response.standardizedScores?.FEAR || '',
-            response.standardizedScores?.ACC || '',
-            response.standardizedScores?.Disemp || '',
-            response.standardizedScores?.Diseng || '',
-            email.email || '',
-            email.firstName || '',
-            email.emailConsent || '',
-            ...(response.responses || [])
-        ];
-    });
-    
-    downloadCSV(headers, rows, 'MAP_all_responses.csv');
-}
+            if (allResponses.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            // Prepare CSV data
+            const headers = [
+                'Timestamp', 'Session ID', 'Age', 'Sex', 
+                'Had Life Threatening Illness', 'Close to Ill Person', 'Closeness Level (1-7)', 
+                'Close to Dying', 'How Close to Death (1-7)', 'Seen Someone Die',
+                'Type',
+                'LEG_Raw', 'FEAR_Raw', 'ACC_Raw', 'Disemp_Raw', 'Diseng_Raw',
+                'LEG_Std', 'FEAR_Std', 'ACC_Std', 'Disemp_Std', 'Diseng_Std',
+                'Email', 'First Name', 'Email Consent',
+                ...Array.from({length: 36}, (_, i) => `Q${i + 1}`)
+            ];
+            
+            const rows = allResponses.map(response => {
+                const email = emailData[response.sessionId] || {};
+                const de = response.deathExperiences || {};
+                
+                return [
+                    response.timestamp,
+                    response.sessionId,
+                    response.demographics?.age || '',
+                    response.demographics?.sex || '',
+                    // Death experience data
+                    de.illness !== null ? (de.illness ? 'Yes' : 'No') : '',
+                    de.closeIllness !== null ? (de.closeIllness ? 'Yes' : 'No') : '',
+                    de.closeIllnessLevel || '',
+                    de.closeDying !== null ? (de.closeDying ? 'Yes' : 'No') : '',
+                    de.closeDyingLevel || '',
+                    de.seenDie !== null ? (de.seenDie ? 'Yes' : 'No') : '',
+                    // Rest of data
+                    response.archetype || '',
+                    response.rawScores?.LEG || '',
+                    response.rawScores?.FEAR || '',
+                    response.rawScores?.ACC || '',
+                    response.rawScores?.Disemp || '',
+                    response.rawScores?.Diseng || '',
+                    response.standardizedScores?.LEG || '',
+                    response.standardizedScores?.FEAR || '',
+                    response.standardizedScores?.ACC || '',
+                    response.standardizedScores?.Disemp || '',
+                    response.standardizedScores?.Diseng || '',
+                    email.email || '',
+                    email.firstName || '',
+                    email.emailConsent || '',
+                    ...(response.responses || [])
+                ];
+            });
+            
+            downloadCSV(headers, rows, 'MAP_all_responses.csv');
+        }
         
         function exportEmailList() {
             const emailEntries = Object.values(emailData).filter(e => e.email);
