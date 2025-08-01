@@ -1381,20 +1381,20 @@ function checkDeathExperienceCompletion() {
             document.getElementById('archetypeDescription').textContent = results.archetype.description;
             // Set archetype image
 const imageMap = {
-    'Fearful Visionary': 'fearful-visionary.png',
-    'Legacy Dreamer': 'legacy-dreamer.png',
-    'Mortality Denier': 'mortality-denier.png',
-    'Mortality Shadow': 'mortality-shadow.png',
-    'Mortality Drifter': 'mortality-drifter.png',
-    'Mortality Champion': 'mortality-champion.png',
-    'Legacy Weaver': 'legacy-weaver.png'
+    'The Fearful Visionary': 'fearful-visionary.png',
+    'The Legacy Dreamer': 'legacy-dreamer.png',
+    'The Mortality Denier': 'mortality-denier.png',
+    'The Mortality Shadow': 'mortality-shadow.png',
+    'The Mortality Drifter': 'mortality-drifter.png',
+    'The Mortality Champion': 'mortality-champion.png',
+    'The Legacy Weaver': 'legacy-weaver.png'
 };
 
 const archetypeImage = document.getElementById('archetypeImage');
-const imagePath = imageMap[archetype.name];
+const imagePath = imageMap[results.archetype.name];  // Use results.archetype.name
 if (imagePath) {
     archetypeImage.src = imagePath;
-    archetypeImage.alt = `${archetype.name} illustration`;
+    archetypeImage.alt = `${results.archetype.name} illustration`;
 } else {
     // Hide image if no matching image found
     archetypeImage.style.display = 'none';
