@@ -1442,6 +1442,9 @@ if (imagePath) {
         }
         
         // Email Modal Functions        
+function showEmailModal() {
+    document.getElementById('emailModal').classList.add('show');
+}
         function closeEmailModal() {
             document.getElementById('emailModal').classList.remove('show');
             document.getElementById('successMessage').classList.remove('show');
