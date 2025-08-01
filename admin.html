@@ -278,6 +278,29 @@
                     <div class="loading">Loading archetype data...</div>
                 </div>
             </div>
+
+            <!-- Death Experience Summary -->
+<div class="section">
+    <h2>Death Experience Summary</h2>
+    <div class="stats-grid" id="deathExperienceStats">
+        <div class="stat-card">
+            <div class="stat-number" id="hadIllness">0%</div>
+            <div class="stat-label">Had Life-Threatening Illness</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="closeToIll">0%</div>
+            <div class="stat-label">Close to Someone Ill</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="nearDeath">0%</div>
+            <div class="stat-label">Been Near Death</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="seenDeath">0%</div>
+            <div class="stat-label">Witnessed Death</div>
+        </div>
+    </div>
+</div>
             
             <!-- Recent Responses -->
             <div class="section">
@@ -285,18 +308,22 @@
                 <div style="overflow-x: auto;">
                     <table id="responsesTable">
                         <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Age</th>
-                                <th>Sex</th>
-                                <th>Archetype</th>
-                                <th>Legacy</th>
-                                <th>Fear</th>
-                                <th>Accept</th>
-                                <th>Disemp</th>
-                                <th>Diseng</th>
-                                <th>Email</th>
-                            </tr>
+                                <tr>
+        <th>Date</th>
+        <th>Age</th>
+        <th>Sex</th>
+        <th>Life Threat</th>
+        <th>Close to Ill</th>
+        <th>Near Death</th>
+        <th>Seen Death</th>
+        <th>Archetype</th>
+        <th>Legacy</th>
+        <th>Fear</th>
+        <th>Accept</th>
+        <th>Disemp</th>
+        <th>Diseng</th>
+        <th>Email</th>
+    </tr>
                         </thead>
                         <tbody id="responsesBody">
                             <tr><td colspan="10" class="loading">Loading responses...</td></tr>
@@ -339,45 +366,46 @@
         }
         
         async function loadDashboard() {
-            if (!window.firebaseDB) {
-                alert('Firebase not initialized. Please check your configuration.');
-                return;
-            }
+    if (!window.firebaseDB) {
+        alert('Firebase not initialized. Please check your configuration.');
+        return;
+    }
+    
+    try {
+        // Load responses
+        const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
+        const responsesSnapshot = await window.firebaseGet(responsesRef);
+        
+        if (responsesSnapshot.exists()) {
+            const responsesData = responsesSnapshot.val();
+            allResponses = Object.entries(responsesData).map(([key, value]) => ({
+                id: key,
+                ...value
+            }));
             
-            try {
-                // Load responses
-                const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
-                const responsesSnapshot = await window.firebaseGet(responsesRef);
-                
-                if (responsesSnapshot.exists()) {
-                    const responsesData = responsesSnapshot.val();
-                    allResponses = Object.entries(responsesData).map(([key, value]) => ({
-                        id: key,
-                        ...value
-                    }));
-                    
-                    // Sort by timestamp (newest first)
-                    allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                }
-                
-                // Load email data
-                const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
-                const emailSnapshot = await window.firebaseGet(emailRef);
-                
-                if (emailSnapshot.exists()) {
-                    emailData = emailSnapshot.val();
-                }
-                
-                // Update UI
-                updateStatistics();
-                updateArchetypeBreakdown();
-                updateResponsesTable();
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                alert('Error loading data. Please check the console.');
-            }
+            // Sort by timestamp (newest first)
+            allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
+        
+        // Load email data
+        const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
+        const emailSnapshot = await window.firebaseGet(emailRef);
+        
+        if (emailSnapshot.exists()) {
+            emailData = emailSnapshot.val();
+        }
+        
+        // Update UI
+        updateStatistics();
+        updateDeathExperienceStats();  // <-- ADD THIS LINE HERE
+        updateArchetypeBreakdown();
+        updateResponsesTable();
+        
+    } catch (error) {
+        console.error('Error loading data:', error);
+        alert('Error loading data. Please check the console.');
+    }
+}
         
         function updateStatistics() {
             // Total responses
@@ -397,6 +425,26 @@
                 document.getElementById('avgLegacy').textContent = avgLegacy.toFixed(2);
             }
         }
+
+        function updateDeathExperienceStats() {
+    if (allResponses.length === 0) return;
+    
+    let hadIllness = 0, closeToIll = 0, nearDeath = 0, seenDeathCount = 0;
+    
+    allResponses.forEach(response => {
+        const de = response.deathExperiences || {};
+        if (de.illness === true) hadIllness++;
+        if (de.closeIllness === true) closeToIll++;
+        if (de.closeDying === true) nearDeath++;
+        if (de.seenDie === true) seenDeathCount++;
+    });
+    
+    const total = allResponses.length;
+    document.getElementById('hadIllness').textContent = Math.round((hadIllness / total) * 100) + '%';
+    document.getElementById('closeToIll').textContent = Math.round((closeToIll / total) * 100) + '%';
+    document.getElementById('nearDeath').textContent = Math.round((nearDeath / total) * 100) + '%';
+    document.getElementById('seenDeath').textContent = Math.round((seenDeathCount / total) * 100) + '%';
+}
         
         function updateArchetypeBreakdown() {
             const archetypeCounts = {};
@@ -419,82 +467,107 @@
         }
         
         function updateResponsesTable() {
-            const tbody = document.getElementById('responsesBody');
-            
-            if (allResponses.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" class="loading">No responses yet</td></tr>';
-                return;
-            }
-            
-            // Show last 20 responses
-            const recentResponses = allResponses.slice(0, 20);
-            
-            const rows = recentResponses.map(response => {
-                const email = emailData[response.sessionId];
-                const date = new Date(response.timestamp).toLocaleDateString();
-                
-                return `
-                    <tr>
-                        <td>${date}</td>
-                        <td>${response.demographics?.age || '-'}</td>
-                        <td>${response.demographics?.sex || '-'}</td>
-                        <td>${response.archetype || '-'}</td>
-                        <td>${response.rawScores?.LEG?.toFixed(2) || '-'}</td>
-                        <td>${response.rawScores?.FEAR?.toFixed(2) || '-'}</td>
-                        <td>${response.rawScores?.ACC?.toFixed(2) || '-'}</td>
-                        <td>${response.rawScores?.Disemp?.toFixed(2) || '-'}</td>
-                        <td>${response.rawScores?.Diseng?.toFixed(2) || '-'}</td>
-                        <td>${email?.email || '-'}</td>
-                    </tr>
-                `;
-            }).join('');
-            
-            tbody.innerHTML = rows;
-        }
+    const tbody = document.getElementById('responsesBody');
+    
+    if (allResponses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="14" class="loading">No responses yet</td></tr>';
+        return;
+    }
+    
+    // Show last 20 responses
+    const recentResponses = allResponses.slice(0, 20);
+    
+    const rows = recentResponses.map(response => {
+        const email = emailData[response.sessionId];
+        const date = new Date(response.timestamp).toLocaleDateString();
+        const de = response.deathExperiences || {};
+        
+        // Format death experience data
+        const lifeThread = de.illness !== null ? (de.illness ? 'Yes' : 'No') : '-';
+        const closeIll = de.closeIllness !== null ? 
+            (de.closeIllness ? `Yes (${de.closeIllnessLevel || 'N/A'})` : 'No') : '-';
+        const nearDeath = de.closeDying !== null ? 
+            (de.closeDying ? `Yes (${de.closeDyingLevel || 'N/A'})` : 'No') : '-';
+        const seenDeath = de.seenDie !== null ? (de.seenDie ? 'Yes' : 'No') : '-';
+        
+        return `
+            <tr>
+                <td>${date}</td>
+                <td>${response.demographics?.age || '-'}</td>
+                <td>${response.demographics?.sex || '-'}</td>
+                <td>${lifeThread}</td>
+                <td>${closeIll}</td>
+                <td>${nearDeath}</td>
+                <td>${seenDeath}</td>
+                <td>${response.archetype || '-'}</td>
+                <td>${response.rawScores?.LEG?.toFixed(2) || '-'}</td>
+                <td>${response.rawScores?.FEAR?.toFixed(2) || '-'}</td>
+                <td>${response.rawScores?.ACC?.toFixed(2) || '-'}</td>
+                <td>${response.rawScores?.Disemp?.toFixed(2) || '-'}</td>
+                <td>${response.rawScores?.Diseng?.toFixed(2) || '-'}</td>
+                <td>${email?.email || '-'}</td>
+            </tr>
+        `;
+    }).join('');
+    
+    tbody.innerHTML = rows;
+}
         
         function exportAllData() {
-            if (allResponses.length === 0) {
-                alert('No data to export');
-                return;
-            }
-            
-            // Prepare CSV data
-            const headers = [
-                'Timestamp', 'Session ID', 'Age', 'Sex', 'Archetype',
-                'LEG_Raw', 'FEAR_Raw', 'ACC_Raw', 'Disemp_Raw', 'Diseng_Raw',
-                'LEG_Std', 'FEAR_Std', 'ACC_Std', 'Disemp_Std', 'Diseng_Std',
-                'Email', 'First Name', 'Email Consent',
-                ...Array.from({length: 36}, (_, i) => `Q${i + 1}`)
-            ];
-            
-            const rows = allResponses.map(response => {
-                const email = emailData[response.sessionId] || {};
-                
-                return [
-                    response.timestamp,
-                    response.sessionId,
-                    response.demographics?.age || '',
-                    response.demographics?.sex || '',
-                    response.archetype || '',
-                    response.rawScores?.LEG || '',
-                    response.rawScores?.FEAR || '',
-                    response.rawScores?.ACC || '',
-                    response.rawScores?.Disemp || '',
-                    response.rawScores?.Diseng || '',
-                    response.standardizedScores?.LEG || '',
-                    response.standardizedScores?.FEAR || '',
-                    response.standardizedScores?.ACC || '',
-                    response.standardizedScores?.Disemp || '',
-                    response.standardizedScores?.Diseng || '',
-                    email.email || '',
-                    email.firstName || '',
-                    email.emailConsent || '',
-                    ...(response.responses || [])
-                ];
-            });
-            
-            downloadCSV(headers, rows, 'MAP_all_responses.csv');
-        }
+    if (allResponses.length === 0) {
+        alert('No data to export');
+        return;
+    }
+    
+    // Prepare CSV data
+    const headers = [
+        'Timestamp', 'Session ID', 'Age', 'Sex', 
+        'Had Life Threatening Illness', 'Close to Ill Person', 'Closeness Level (1-7)', 
+        'Close to Dying', 'How Close to Death (1-7)', 'Seen Someone Die',
+        'Archetype',
+        'LEG_Raw', 'FEAR_Raw', 'ACC_Raw', 'Disemp_Raw', 'Diseng_Raw',
+        'LEG_Std', 'FEAR_Std', 'ACC_Std', 'Disemp_Std', 'Diseng_Std',
+        'Email', 'First Name', 'Email Consent',
+        ...Array.from({length: 36}, (_, i) => `Q${i + 1}`)
+    ];
+    
+    const rows = allResponses.map(response => {
+        const email = emailData[response.sessionId] || {};
+        const de = response.deathExperiences || {};
+        
+        return [
+            response.timestamp,
+            response.sessionId,
+            response.demographics?.age || '',
+            response.demographics?.sex || '',
+            // Death experience data
+            de.illness !== null ? (de.illness ? 'Yes' : 'No') : '',
+            de.closeIllness !== null ? (de.closeIllness ? 'Yes' : 'No') : '',
+            de.closeIllnessLevel || '',
+            de.closeDying !== null ? (de.closeDying ? 'Yes' : 'No') : '',
+            de.closeDyingLevel || '',
+            de.seenDie !== null ? (de.seenDie ? 'Yes' : 'No') : '',
+            // Rest of data
+            response.archetype || '',
+            response.rawScores?.LEG || '',
+            response.rawScores?.FEAR || '',
+            response.rawScores?.ACC || '',
+            response.rawScores?.Disemp || '',
+            response.rawScores?.Diseng || '',
+            response.standardizedScores?.LEG || '',
+            response.standardizedScores?.FEAR || '',
+            response.standardizedScores?.ACC || '',
+            response.standardizedScores?.Disemp || '',
+            response.standardizedScores?.Diseng || '',
+            email.email || '',
+            email.firstName || '',
+            email.emailConsent || '',
+            ...(response.responses || [])
+        ];
+    });
+    
+    downloadCSV(headers, rows, 'MAP_all_responses.csv');
+}
         
         function exportEmailList() {
             const emailEntries = Object.values(emailData).filter(e => e.email);
