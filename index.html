@@ -61,6 +61,33 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* Archetype Image Styles */
+.archetype-image {
+    width: calc(100% + 6rem); /* Full bleed - accounts for 3rem padding on each side */
+    margin: -3rem -3rem 2rem -3rem; /* Negative margin to achieve full bleed */
+    height: 300px; /* Adjust height as needed */
+    object-fit: cover;
+    border-radius: 20px 20px 0 0; /* Rounded corners only at top to match container */
+}
+
+/* Adjust the results container to remove top padding when image is present */
+.results-container.has-image {
+    padding-top: 0;
+}
+
+/* Mobile responsive adjustment */
+@media (max-width: 768px) {
+    .archetype-image {
+        width: calc(100% + 4rem); /* Adjust for mobile padding */
+        margin: -2rem -2rem 1.5rem -2rem;
+        height: 200px;
+    }
+    
+    .results-container.has-image {
+        padding-top: 0;
+    }
+}
         
         body {
             font-family: 'Solway', serif;
@@ -810,12 +837,13 @@
         <!-- Results Screen -->
         <div class="screen" id="resultsScreen">
             <div class="content">
-                <div class="results-container">
-                    <div class="archetype-result">
-                        <h3>Your Mortality Attitude Type</h3>
-                        <h2 id="archetypeName">Your Type</h2>
-                        <p id="archetypeDescription">Description will appear here</p>
-                    </div>
+                <div class="results-container has-image">
+    <img id="archetypeImage" class="archetype-image" src="" alt="Archetype illustration">
+    <div class="archetype-result">
+        <h3>Your Mortality Archetype</h3>
+        <h2 id="archetypeName">Your Archetype</h2>
+        <p id="archetypeDescription">Description will appear here</p>
+    </div>
                     
                     <div class="chart-container" id="chartContainer">
                         <h3>Your subscale scores</h3>
@@ -1351,6 +1379,26 @@ function checkDeathExperienceCompletion() {
             // Display archetype
             document.getElementById('archetypeName').textContent = results.archetype.name;
             document.getElementById('archetypeDescription').textContent = results.archetype.description;
+            // Set archetype image
+const imageMap = {
+    'Fearful Visionary': 'fearful-visionary.png',
+    'Legacy Dreamer': 'legacy-dreamer.png',
+    'Mortality Denier': 'mortality-denier.png',
+    'Mortality Shadow': 'mortality-shadow.png',
+    'Mortality Drifter': 'mortality-drifter.png',
+    'Mortality Champion': 'mortality-champion.png',
+    'Legacy Weaver': 'legacy-weaver.png'
+};
+
+const archetypeImage = document.getElementById('archetypeImage');
+const imagePath = imageMap[archetype.name];
+if (imagePath) {
+    archetypeImage.src = imagePath;
+    archetypeImage.alt = `${archetype.name} illustration`;
+} else {
+    // Hide image if no matching image found
+    archetypeImage.style.display = 'none';
+}
             
             // Create bar charts
             createBarCharts(results.rawScores);
