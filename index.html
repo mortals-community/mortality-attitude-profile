@@ -753,16 +753,122 @@
         </div>
     </div>
     
-    <!-- App Container -->
-    <div class="app-container" id="appContainer">
-        <!-- Landing Screen -->
-        <div class="screen active" id="landingScreen">
-            <div class="content">
-                <h1>Discover your Mortality Type</h1>
-                <p>Explore your relationship with mortality through this evidence-based assessment. Your responses will reveal one of seven types that describe how you engage with life's finite nature.</p>
-                <button class="btn" onclick="startAssessment()">Start Assessment</button>
-            </div>
+    <!-- Updated Landing Screen with image -->
+<div class="screen active" id="landingScreen">
+    <div class="content">
+        <img src="mortality-circle.png" alt="People in a circle" style="width: 280px; height: 280px; margin-bottom: 2rem; object-fit: contain;">
+        <h1>Discover what really drives you</h1>
+        <p>Death is the one experience we all share, yet each of us relates to it differently. Some of us are driven to create lasting legacies. Others find peace in acceptance. Many experience fear, while some simply disengage from the topic entirely.</p>
+        <button class="btn" onclick="startAssessment()">Curious?</button>
+    </div>
+</div>
+
+<!-- Intro Screen 1 -->
+<div class="screen" id="intro1Screen">
+    <div class="content">
+        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">How do you relate to life's biggest certainty?</h2>
+        
+        <div style="max-width: 700px; margin: 0 auto; text-align: left;">
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                The Mortality Attitude Profile (MAP) is a research-based quiz that helps you understand your unique relationship with mortality. Through 36 carefully crafted questions, you'll discover which of seven distinct "mortality types" best describes how you engage with life's finite nature.
+            </p>
+            
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                This isn't about being morbid or pessimistic – it's about self-awareness. Understanding how you relate to mortality can unlock insights about what drives you, what holds you back, and what truly matters in your life.
+            </p>
         </div>
+        
+        <button class="btn" onclick="showScreen('intro2')">Next →</button>
+    </div>
+</div>
+
+<!-- Intro Screen 2 -->
+<div class="screen" id="intro2Screen">
+    <div class="content">
+        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Built on peer-reviewed research</h2>
+        
+        <div style="max-width: 700px; margin: 0 auto; text-align: left;">
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                The MAP is based on the research developed by psychologists. This framework emerged from studying hundreds of people across diverse backgrounds.
+            </p>
+            
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                The research identified five key dimensions of mortality awareness:
+            </p>
+            
+            <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Legacy</strong> - The drive to create something lasting
+                </li>
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Fear</strong> - Anxiety about death and dying
+                </li>
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Acceptance</strong> - Integration of mortality into your worldview
+                </li>
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Disempowerment</strong> - Feelings of helplessness against mortality
+                </li>
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Disengagement</strong> - Avoidance of death-related thoughts
+                </li>
+            </ul>
+            
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                Your unique pattern across these dimensions determines your mortality type – one of seven types that capture different ways people navigate their awareness of death.
+            </p>
+        </div>
+        
+        <button class="btn" onclick="showScreen('intro3')">Next →</button>
+    </div>
+</div>
+
+<!-- Intro Screen 3 -->
+<div class="screen" id="intro3Screen">
+    <div class="content">
+        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Your personalised mortality type</h2>
+        
+        <div style="max-width: 700px; margin: 0 auto; text-align: left;">
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                In the next 5-7 minutes, you'll answer questions about your thoughts, feelings, and attitudes toward mortality. There are no right or wrong answers – only honest reflections of your personal experience.
+            </p>
+            
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                After completing the assessment, you'll receive:
+            </p>
+            
+            <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Your Mortality Type</strong> - One of seven evidence-based types that best matches your score
+                </li>
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Your Dimension Scores</strong> - How you score on each of the five core dimensions
+                </li>
+                <li style="margin-bottom: 1rem; padding-left: 30px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--orange-accent);">•</span>
+                    <strong style="color: var(--text-dark);">Full Analysis</strong> (via email) - Detailed interpretation to support your growth in life
+                </li>
+            </ul>
+            
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                Remember: This tool is for self-reflection and understanding. Your results can offer valuable insights, but they're just one perspective on a deeply personal aspect of human experience.
+            </p>
+            
+            <p style="color: var(--text-dark); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                Ready to begin?
+            </p>
+        </div>
+        
+        <button class="btn" onclick="showScreen('demographics')">Let's go →</button>
+    </div>
+</div>
         
         <!-- Demographics Screen -->
         <div class="screen" id="demographicsScreen">
@@ -1214,7 +1320,7 @@
         // Start Assessment
         function startAssessment() {
             appState = {
-                currentScreen: 'demographics',
+                currentScreen: 'intro1',
                 currentQuestion: 0,
                 responses: [],
                 demographics: {},
@@ -1230,7 +1336,7 @@
                 results: null,
                 sessionId: generateSessionId()
             };
-            showScreen('demographics');
+            showScreen('intro1');
         }
         
         // Check Demographics
