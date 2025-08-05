@@ -1760,100 +1760,161 @@
             }
         }
         
-        // Send Email
-        async function sendEmail() {
-            console.log('Starting email send process...');
-            
-            const firstName = document.getElementById('firstName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const emailConsent = document.getElementById('emailConsent').checked;
-            const sendBtn = document.getElementById('sendEmailBtn');
-            
-            // Validation
-            if (!firstName || !email) {
-                alert('Please fill in all fields');
-                return;
+        // Updated Send Email function with emoji-based interpretations
+async function sendEmail() {
+    console.log('Starting email send process...');
+    
+    const firstName = document.getElementById('firstName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const emailConsent = document.getElementById('emailConsent').checked;
+    const sendBtn = document.getElementById('sendEmailBtn');
+    
+    // Validation
+    if (!firstName || !email) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    // Initialize EmailJS if not already done
+    if (window.emailjs && !window.emailjsInitialized) {
+        try {
+            emailjs.init("FpS7IboHIPBgSaspa");
+            window.emailjsInitialized = true;
+            console.log('EmailJS initialized successfully');
+        } catch (initError) {
+            console.error('EmailJS init error:', initError);
+        }
+    }
+    
+    if (!window.emailjs) {
+        console.error('EmailJS not found on window object');
+        alert('Email service is not available. Please refresh the page and try again.');
+        return;
+    }
+    
+    // Disable button and show loading
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<span class="loading"></span> Sending...';
+    
+    // Update Firebase with email info
+    if (window.firebaseDB && appState.sessionId) {
+        try {
+            const emailDataRef = window.firebaseRef(window.firebaseDB, `email_data/${appState.sessionId}`);
+            await window.firebaseSet(emailDataRef, {
+                sessionId: appState.sessionId,
+                firstName: firstName,
+                email: email,
+                emailConsent: emailConsent,
+                emailedAt: new Date().toISOString()
+            });
+            console.log('Email data saved to Firebase');
+        } catch (error) {
+            console.error('Error saving email data:', error);
+        }
+    }
+    
+    // Helper function to create detailed email interpretations
+    function getDetailedEmailInterpretation(subscale, rawScore) {
+        const interpretation = getScoreInterpretation(subscale, rawScore);
+        const emoji = interpretation.emoji;
+        const label = interpretation.label;
+        const description = interpretation.description;
+        
+        // Create a comprehensive interpretation for email
+        let detailedText = `${emoji} ${label} - ${description}. `;
+        
+        // Add additional context based on the score
+        const mean = MMAMM.referenceData[subscale].mean;
+        const std = MMAMM.referenceData[subscale].std;
+        const zScore = (rawScore - mean) / std;
+        
+        // Add personalized insights based on subscale
+        if (subscale === 'LEG') {
+            if (zScore > 0.5) {
+                detailedText += "You have a strong drive to create something meaningful that will outlast you. This may manifest in creative projects, mentoring others, or building institutions. Consider channeling this energy into concrete legacy projects.";
+            } else if (zScore < -0.5) {
+                detailedText += "You're less focused on leaving a traditional legacy, which can free you to live more in the present moment. This isn't a weakness - it may mean you find meaning in immediate experiences rather than future impact.";
+            } else {
+                detailedText += "You have a balanced approach to legacy - interested but not consumed by it. This allows you to appreciate both present experiences and future impact.";
             }
-            
-            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-                alert('Please enter a valid email address');
-                return;
+        } else if (subscale === 'FEAR') {
+            if (zScore < -0.5) {
+                detailedText += "Your low death anxiety is a strength that allows you to engage with life more fully. You can discuss mortality without significant distress, which helps in making important life decisions.";
+            } else if (zScore > 0.5) {
+                detailedText += "Your heightened awareness of mortality creates anxiety that may be limiting your choices. Consider exploring what specific aspects of death concern you most - often naming fears reduces their power.";
+            } else {
+                detailedText += "You experience typical levels of death-related concern. This natural anxiety can be a motivator without being overwhelming.";
             }
-            
-            // Initialize EmailJS if not already done
-            if (window.emailjs && !window.emailjsInitialized) {
-                try {
-                    emailjs.init("FpS7IboHIPBgSaspa");
-                    window.emailjsInitialized = true;
-                    console.log('EmailJS initialized successfully');
-                } catch (initError) {
-                    console.error('EmailJS init error:', initError);
-                }
+        } else if (subscale === 'ACC') {
+            if (zScore > 0.5) {
+                detailedText += "Your acceptance of mortality is a profound strength. This emotional integration allows you to make decisions from a place of wisdom rather than fear, and to appreciate life's preciousness.";
+            } else if (zScore < -0.5) {
+                detailedText += "You're still processing the reality of mortality, which is completely normal. Acceptance often develops through life experience and reflection. There's no rush to 'accept' death - work with where you are.";
+            } else {
+                detailedText += "You're in the process of integrating mortality into your worldview. This ongoing journey of acceptance can deepen your appreciation for life.";
             }
-            
-            if (!window.emailjs) {
-                console.error('EmailJS not found on window object');
-                alert('Email service is not available. Please refresh the page and try again.');
-                return;
+        } else if (subscale === 'Disemp') {
+            if (zScore < -0.5) {
+                detailedText += "You maintain a sense of agency despite mortality's inevitability. This empowerment allows you to take meaningful action rather than feeling paralyzed by life's finite nature.";
+            } else if (zScore > 0.5) {
+                detailedText += "Feeling powerless against mortality is affecting your sense of agency. Remember that while death is inevitable, how you live is entirely in your control. Small, meaningful actions can restore your sense of power.";
+            } else {
+                detailedText += "You sometimes struggle with feelings of powerlessness about mortality. This is a common human experience - finding areas where you do have control can help balance these feelings.";
             }
-            
-            // Disable button and show loading
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '<span class="loading"></span> Sending...';
-            
-            // Update Firebase with email info
-            if (window.firebaseDB && appState.sessionId) {
-                try {
-                    const emailDataRef = window.firebaseRef(window.firebaseDB, `email_data/${appState.sessionId}`);
-                    await window.firebaseSet(emailDataRef, {
-                        sessionId: appState.sessionId,
-                        firstName: firstName,
-                        email: email,
-                        emailConsent: emailConsent,
-                        emailedAt: new Date().toISOString()
-                    });
-                    console.log('Email data saved to Firebase');
-                } catch (error) {
-                    console.error('Error saving email data:', error);
-                }
-            }
-            
-            // Prepare email data
-            const templateParams = {
-                to_email: email,
-                user_name: firstName,
-                archetype_name: appState.results.archetype.name,
-                archetype_description: appState.results.archetype.description,
-                leg_score: appState.results.rawScores.LEG.toFixed(2),
-                fear_score: appState.results.rawScores.FEAR.toFixed(2),
-                acc_score: appState.results.rawScores.ACC.toFixed(2),
-                disemp_score: appState.results.rawScores.Disemp.toFixed(2),
-                diseng_score: appState.results.rawScores.Diseng.toFixed(2),
-                leg_interpretation: getEmailScoreInterpretation('LEG', appState.results.rawScores.LEG),
-                fear_interpretation: getEmailScoreInterpretation('FEAR', appState.results.rawScores.FEAR),
-                acc_interpretation: getEmailScoreInterpretation('ACC', appState.results.rawScores.ACC),
-                disemp_interpretation: getEmailScoreInterpretation('Disemp', appState.results.rawScores.Disemp),
-                diseng_interpretation: getEmailScoreInterpretation('Diseng', appState.results.rawScores.Diseng)
-            };
-            
-            try {
-                const response = await emailjs.send('service_cym10iv', 'template_zj4e18l', templateParams);
-                console.log('Email sent successfully:', response);
-                
-                document.getElementById('successMessage').classList.add('show');
-                
-                setTimeout(() => {
-                    sendBtn.disabled = false;
-                    sendBtn.innerHTML = 'Send Results';
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Email error:', error);
-                alert('Sorry, there was an error sending your results. Please try again.');
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = 'Send Results';
+        } else if (subscale === 'Diseng') {
+            if (zScore < -0.5) {
+                detailedText += "You actively engage with thoughts about mortality rather than avoiding them. This engagement, while sometimes uncomfortable, often leads to more intentional living and clearer priorities.";
+            } else if (zScore > 0.5) {
+                detailedText += "You tend to avoid thinking about death, which is a common protective mechanism. While this can reduce anxiety short-term, gradual engagement with mortality (at your own pace) often leads to greater life satisfaction.";
+            } else {
+                detailedText += "You have a moderate level of engagement with mortality thoughts. This balance allows you to function without obsessing, while still maintaining some awareness of life's finite nature.";
             }
         }
+        
+        return detailedText;
+    }
+    
+    // Prepare email data with detailed interpretations
+    const templateParams = {
+        to_email: email,
+        user_name: firstName,
+        archetype_name: appState.results.archetype.name,
+        archetype_description: appState.results.archetype.description,
+        leg_score: appState.results.rawScores.LEG.toFixed(2),
+        fear_score: appState.results.rawScores.FEAR.toFixed(2),
+        acc_score: appState.results.rawScores.ACC.toFixed(2),
+        disemp_score: appState.results.rawScores.Disemp.toFixed(2),
+        diseng_score: appState.results.rawScores.Diseng.toFixed(2),
+        leg_interpretation: getDetailedEmailInterpretation('LEG', appState.results.rawScores.LEG),
+        fear_interpretation: getDetailedEmailInterpretation('FEAR', appState.results.rawScores.FEAR),
+        acc_interpretation: getDetailedEmailInterpretation('ACC', appState.results.rawScores.ACC),
+        disemp_interpretation: getDetailedEmailInterpretation('Disemp', appState.results.rawScores.Disemp),
+        diseng_interpretation: getDetailedEmailInterpretation('Diseng', appState.results.rawScores.Diseng)
+    };
+    
+    try {
+        const response = await emailjs.send('service_cym10iv', 'template_zj4e18l', templateParams);
+        console.log('Email sent successfully:', response);
+        
+        document.getElementById('successMessage').classList.add('show');
+        
+        setTimeout(() => {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = 'Send Results';
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Email error:', error);
+        alert('Sorry, there was an error sending your results. Please try again.');
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = 'Send Results';
+    }
+}
         
         // Start Over
         function startOver() {
