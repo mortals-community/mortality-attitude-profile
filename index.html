@@ -53,6 +53,7 @@
             --text-dark: #004E89;
             --gray-light: #E0E0E0;
             --gray-medium: #999;
+            --bright-orange: #FF8C42; /* Brighter orange for moderate scores */
         }
         
         /* Reset and Base Styles */
@@ -63,31 +64,31 @@
         }
 
         /* Archetype Image Styles */
-.archetype-image {
-    width: calc(100% + 6rem); /* Full bleed - accounts for 3rem padding on each side */
-    margin: -3rem -3rem 2rem -3rem; /* Negative margin to achieve full bleed */
-    height: 300px; /* Adjust height as needed */
-    object-fit: cover;
-    border-radius: 20px 20px 0 0; /* Rounded corners only at top to match container */
-}
+        .archetype-image {
+            width: calc(100% + 6rem); /* Full bleed - accounts for 3rem padding on each side */
+            margin: -3rem -3rem 2rem -3rem; /* Negative margin to achieve full bleed */
+            height: 300px; /* Adjust height as needed */
+            object-fit: cover;
+            border-radius: 20px 20px 0 0; /* Rounded corners only at top to match container */
+        }
 
-/* Adjust the results container to remove top padding when image is present */
-.results-container.has-image {
-    padding-top: 0;
-}
+        /* Adjust the results container to remove top padding when image is present */
+        .results-container.has-image {
+            padding-top: 0;
+        }
 
-/* Mobile responsive adjustment */
-@media (max-width: 768px) {
-    .archetype-image {
-        width: calc(100% + 4rem); /* Adjust for mobile padding */
-        margin: -2rem -2rem 1.5rem -2rem;
-        height: 200px;
-    }
-    
-    .results-container.has-image {
-        padding-top: 0;
-    }
-}
+        /* Mobile responsive adjustment */
+        @media (max-width: 768px) {
+            .archetype-image {
+                width: calc(100% + 4rem); /* Adjust for mobile padding */
+                margin: -2rem -2rem 1.5rem -2rem;
+                height: 200px;
+            }
+            
+            .results-container.has-image {
+                padding-top: 0;
+            }
+        }
         
         body {
             font-family: 'Solway', serif;
@@ -261,33 +262,47 @@
         }
 
         /* Death Experience Screen Styles */
-    .btn-option {
-    background: white;
-    color: var(--text-dark);
-    border: 2px solid var(--gray-light);
-    padding: 12px 30px;
-    font-size: 1rem;
-    font-weight: 500;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Solway', serif;
-}
+        .btn-option {
+            background: white;
+            color: var(--text-dark);
+            border: 2px solid var(--gray-light);
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Solway', serif;
+        }
 
-.btn-option:hover {
-    border-color: var(--orange-accent);
-    transform: translateY(-2px);
-}
+        .btn-option:hover {
+            border-color: var(--orange-accent);
+            transform: translateY(-2px);
+        }
 
-.btn-option.selected {
-    background: var(--orange-accent);
-    color: white;
-    border-color: var(--orange-accent);
-}
+        .btn-option.selected {
+            background: var(--orange-accent);
+            color: white;
+            border-color: var(--orange-accent);
+        }
 
-.form-group + .form-group {
-    margin-top: 2.5rem;
-}
+        .form-group + .form-group {
+            margin-top: 2.5rem;
+        }
+
+        /* Death Experience Screen Layout Fix */
+        #deathExperienceScreen .content {
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        #deathExperienceScreen .form-group label {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
         
         /* Question Screen Specific */
         .question-wrapper {
@@ -440,70 +455,107 @@
             pointer-events: auto;
         }
         
-        /* Results Screen */
+        /* Results Screen - Updated with emoji-based design */
         .results-container {
             padding: 3rem;
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 78, 137, 0.1);
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .archetype-result {
             margin-bottom: 3rem;
         }
         
+        .archetype-result h3 {
+            color: var(--blue-accent);
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+        
         .archetype-result h2 {
-            color: var(--orange-accent);
+            color: var(--text-dark);
             margin-bottom: 1rem;
         }
         
         .archetype-result p {
             color: var(--text-dark);
             font-size: 1.1rem;
+            font-weight: 700;
         }
         
-        /* Bar Chart Container */
-        .chart-container {
+        /* Modern Scores Section */
+        .scores-section {
             margin: 3rem 0;
         }
         
-        .subscale-chart {
-            margin-bottom: 2rem;
+        .scores-title {
+            font-size: 1.3em;
+            font-weight: 400;
+            color: var(--blue-accent);
+            margin-bottom: 30px;
+            text-align: center;
         }
         
-        .subscale-name {
+        .score-row {
+            display: grid;
+            grid-template-columns: 100px 70px auto 80px;
+            align-items: center;
+            gap: 25px;
+            padding: 18px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .score-row:last-child {
+            border-bottom: none;
+        }
+        
+        .score-category {
+            font-size: 0.95em;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        
+        .score-emoji {
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        .score-status {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
             text-align: left;
         }
         
-        .bar-wrapper {
-            background: var(--gray-light);
-            height: 30px;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .bar-fill {
-            height: 100%;
-            background: var(--orange-accent);
-            border-radius: 15px;
-            transition: width 1s ease-out;
-            position: relative;
-        }
-        
-        .bar-score {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.9rem;
+        .score-label {
+            font-size: 1.1em;
             font-weight: 600;
-            color: white;
+            color: var(--text-dark);
+            text-align: left;
         }
+        
+        .score-description {
+            font-size: 0.85em;
+            color: #718096;
+            text-align: left;
+        }
+        
+        .score-value {
+            font-size: 0.9em;
+            text-align: right;
+            font-weight: 500;
+        }
+        
+        /* Color coding for score values */
+        .score-high { color: #22c55e; }
+        .score-good { color: #3b82f6; }
+        .score-moderate { color: var(--bright-orange); }
+        .score-problem { color: #ef4444; }
         
         /* Email Modal */
         .modal {
@@ -658,6 +710,27 @@
             .modal-content {
                 padding: 2rem;
             }
+            
+            /* Mobile responsive for score rows */
+            .score-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .score-category {
+                font-size: 1em;
+                margin-bottom: 5px;
+            }
+            
+            .score-emoji {
+                margin-bottom: 5px;
+            }
+            
+            .score-value {
+                text-align: center;
+                margin-top: 5px;
+            }
         }
     </style>
 </head>
@@ -726,86 +799,86 @@
         </div>
 
         <!-- Death Experience Screen -->
-<div class="screen" id="deathExperienceScreen">
-    <div class="content">
-        <h2>Life Experiences</h2>
-        <p>Understanding your past experiences helps us provide more personalized insights</p>
-        
-        <!-- Question 1: Life threatening illness -->
-        <div class="form-group">
-            <label>Have you ever had a life threatening illness?</label>
-            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
-                <button class="btn-option" id="illness-yes" onclick="setDeathExperience('illness', true)">Yes</button>
-                <button class="btn-option" id="illness-no" onclick="setDeathExperience('illness', false)">No</button>
-            </div>
-        </div>
-        
-        <!-- Question 2: Close to someone with illness -->
-        <div class="form-group">
-            <label>Have you ever been emotionally close to someone who has had a life threatening illness?</label>
-            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
-                <button class="btn-option" id="closeIllness-yes" onclick="setDeathExperience('closeIllness', true)">Yes</button>
-                <button class="btn-option" id="closeIllness-no" onclick="setDeathExperience('closeIllness', false)">No</button>
-            </div>
-        </div>
-        
-        <!-- Follow-up: How close (only shown if yes) -->
-        <div class="form-group" id="closeIllnessScale" style="display: none;">
-            <label>How emotionally close were you to that person during their illness?</label>
-            <div class="likert-scale" style="margin-top: 20px;">
-                <span class="likert-label">Not close<br>at all</span>
-                <div class="likert-options">
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 1)">1</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 2)">2</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 3)">3</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 4)">4</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 5)">5</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 6)">6</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 7)">7</button>
+        <div class="screen" id="deathExperienceScreen">
+            <div class="content">
+                <h2>Life Experiences</h2>
+                <p>Understanding your past experiences helps us provide more personalized insights</p>
+                
+                <!-- Question 1: Life threatening illness -->
+                <div class="form-group">
+                    <label>Have you ever had a life threatening illness?</label>
+                    <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                        <button class="btn-option" id="illness-yes" onclick="setDeathExperience('illness', true)">Yes</button>
+                        <button class="btn-option" id="illness-no" onclick="setDeathExperience('illness', false)">No</button>
+                    </div>
                 </div>
-                <span class="likert-label">Extremely<br>close</span>
-            </div>
-        </div>
-        
-        <!-- Question 3: Close to dying -->
-        <div class="form-group">
-            <label>Have you ever been close to dying?</label>
-            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
-                <button class="btn-option" id="closeDying-yes" onclick="setDeathExperience('closeDying', true)">Yes</button>
-                <button class="btn-option" id="closeDying-no" onclick="setDeathExperience('closeDying', false)">No</button>
-            </div>
-        </div>
-        
-        <!-- Follow-up: How close to death -->
-        <div class="form-group" id="closeDyingScale" style="display: none;">
-            <label>How close to death did you come?</label>
-            <div class="likert-scale" style="margin-top: 20px;">
-                <span class="likert-label">Not very<br>close</span>
-                <div class="likert-options">
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 1)">1</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 2)">2</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 3)">3</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 4)">4</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 5)">5</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 6)">6</button>
-                    <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 7)">7</button>
+                
+                <!-- Question 2: Close to someone with illness -->
+                <div class="form-group">
+                    <label>Have you ever been emotionally close to someone who has had a life threatening illness?</label>
+                    <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                        <button class="btn-option" id="closeIllness-yes" onclick="setDeathExperience('closeIllness', true)">Yes</button>
+                        <button class="btn-option" id="closeIllness-no" onclick="setDeathExperience('closeIllness', false)">No</button>
+                    </div>
                 </div>
-                <span class="likert-label">Extremely<br>close</span>
+                
+                <!-- Follow-up: How close (only shown if yes) -->
+                <div class="form-group" id="closeIllnessScale" style="display: none;">
+                    <label>How emotionally close were you to that person during their illness?</label>
+                    <div class="likert-scale" style="margin-top: 20px;">
+                        <span class="likert-label">Not close<br>at all</span>
+                        <div class="likert-options">
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 1)">1</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 2)">2</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 3)">3</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 4)">4</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 5)">5</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 6)">6</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeIllnessLevel', 7)">7</button>
+                        </div>
+                        <span class="likert-label">Extremely<br>close</span>
+                    </div>
+                </div>
+                
+                <!-- Question 3: Close to dying -->
+                <div class="form-group">
+                    <label>Have you ever been close to dying?</label>
+                    <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                        <button class="btn-option" id="closeDying-yes" onclick="setDeathExperience('closeDying', true)">Yes</button>
+                        <button class="btn-option" id="closeDying-no" onclick="setDeathExperience('closeDying', false)">No</button>
+                    </div>
+                </div>
+                
+                <!-- Follow-up: How close to death -->
+                <div class="form-group" id="closeDyingScale" style="display: none;">
+                    <label>How close to death did you come?</label>
+                    <div class="likert-scale" style="margin-top: 20px;">
+                        <span class="likert-label">Not very<br>close</span>
+                        <div class="likert-options">
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 1)">1</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 2)">2</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 3)">3</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 4)">4</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 5)">5</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 6)">6</button>
+                            <button class="likert-option" onclick="setDeathExperienceScale('closeDyingLevel', 7)">7</button>
+                        </div>
+                        <span class="likert-label">Extremely<br>close</span>
+                    </div>
+                </div>
+                
+                <!-- Question 4: Seen someone die -->
+                <div class="form-group">
+                    <label>Have you ever seen someone die?</label>
+                    <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
+                        <button class="btn-option" id="seenDie-yes" onclick="setDeathExperience('seenDie', true)">Yes</button>
+                        <button class="btn-option" id="seenDie-no" onclick="setDeathExperience('seenDie', false)">No</button>
+                    </div>
+                </div>
+                
+                <button class="btn next-btn" id="deathExperienceNext" onclick="startQuestions()">Continue</button>
             </div>
         </div>
-        
-        <!-- Question 4: Seen someone die -->
-        <div class="form-group">
-            <label>Have you ever seen someone die?</label>
-            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 10px;">
-                <button class="btn-option" id="seenDie-yes" onclick="setDeathExperience('seenDie', true)">Yes</button>
-                <button class="btn-option" id="seenDie-no" onclick="setDeathExperience('seenDie', false)">No</button>
-            </div>
-        </div>
-        
-        <button class="btn next-btn" id="deathExperienceNext" onclick="startQuestions()">Continue</button>
-    </div>
-</div>
         
         <!-- Question Screen -->
         <div class="screen" id="questionScreen">
@@ -838,16 +911,18 @@
         <div class="screen" id="resultsScreen">
             <div class="content">
                 <div class="results-container has-image">
-    <img id="archetypeImage" class="archetype-image" src="" alt="Archetype illustration">
-    <div class="archetype-result">
-        <h3>Your Mortality Archetype</h3>
-        <h2 id="archetypeName">Your Archetype</h2>
-        <p id="archetypeDescription">Description will appear here</p>
-    </div>
+                    <img id="archetypeImage" class="archetype-image" src="" alt="Archetype illustration">
+                    <div class="archetype-result">
+                        <h3>Your mortality type</h3>
+                        <h2 id="archetypeName">Your Archetype</h2>
+                        <p id="archetypeDescription">Description will appear here</p>
+                    </div>
                     
-                    <div class="chart-container" id="chartContainer">
-                        <h3>Your subscale scores</h3>
-                        <!-- Charts will be dynamically inserted here -->
+                    <div class="scores-section">
+                        <h2 class="scores-title">Your type explained</h2>
+                        <div id="scoresContainer">
+                            <!-- Score rows will be dynamically inserted here -->
+                        </div>
                     </div>
                     
                     <div class="button-group">
@@ -896,7 +971,7 @@
     </div>
     
     <script>
-        // MMAMM Core Logic (unchanged from Phase 3)
+        // MMAMM Core Logic (unchanged from original)
         const MMAMM = {
             questions: [
                 { id: 1, text: "It makes me angry when I think about my own death", subscale: "FEAR" },
@@ -1094,13 +1169,13 @@
             responses: [],
             demographics: {},
             deathExperiences: {
-        illness: null,
-        closeIllness: null,
-        closeIllnessLevel: null,
-        closeDying: null,
-        closeDyingLevel: null,
-        seenDie: null
-    },
+                illness: null,
+                closeIllness: null,
+                closeIllnessLevel: null,
+                closeDying: null,
+                closeDyingLevel: null,
+                seenDie: null
+            },
             selectedOption: null,
             results: null,
             sessionId: null
@@ -1143,14 +1218,14 @@
                 currentQuestion: 0,
                 responses: [],
                 demographics: {},
-                deathExperiences: {  // Add this
-            illness: null,
-            closeIllness: null,
-            closeIllnessLevel: null,
-            closeDying: null,
-            closeDyingLevel: null,
-            seenDie: null
-        },
+                deathExperiences: {
+                    illness: null,
+                    closeIllness: null,
+                    closeIllnessLevel: null,
+                    closeDying: null,
+                    closeDyingLevel: null,
+                    seenDie: null
+                },
                 selectedOption: null,
                 results: null,
                 sessionId: generateSessionId()
@@ -1173,103 +1248,102 @@
         }
 
         // Start Questions
-function startQuestions() {
-    // Check which screen we're coming from
-    if (appState.currentScreen === 'demographics') {
-        // Coming from demographics, go to death experience
-        if (!appState.demographics.age || !appState.demographics.sex) return;
+        function startQuestions() {
+            // Check which screen we're coming from
+            if (appState.currentScreen === 'demographics') {
+                // Coming from demographics, go to death experience
+                if (!appState.demographics.age || !appState.demographics.sex) return;
+                
+                showScreen('deathExperience');
+                return;
+            }
+            
+            // Coming from death experience, check if complete
+            const de = appState.deathExperiences;
+            if (de.illness === null || de.closeIllness === null || de.closeDying === null || de.seenDie === null) {
+                return;
+            }
+            
+            // Start the actual questions
+            appState.currentQuestion = 0;
+            appState.responses = [];
+            appState.selectedOption = null;
+            
+            showScreen('question');
+            document.getElementById('progressContainer').classList.add('show');
+            displayQuestion();
+        }
         
-        showScreen('deathExperience');
-        return;
-    }
-    
-    // Coming from death experience, check if complete
-    const de = appState.deathExperiences;
-    if (de.illness === null || de.closeIllness === null || de.closeDying === null || de.seenDie === null) {
-        return;
-    }
-    
-    // Start the actual questions
-    appState.currentQuestion = 0;
-    appState.responses = [];
-    appState.selectedOption = null;
-    
-    showScreen('question');
-    document.getElementById('progressContainer').classList.add('show');
-    displayQuestion();
-}
         // Death Experience Functions
-function setDeathExperience(question, value) {
-    appState.deathExperiences[question] = value;
-    
-    // Update button states
-    document.getElementById(`${question}-yes`).classList.toggle('selected', value === true);
-    document.getElementById(`${question}-no`).classList.toggle('selected', value === false);
-    
-    // Show/hide follow-up scales
-    if (question === 'closeIllness') {
-        document.getElementById('closeIllnessScale').style.display = value ? 'block' : 'none';
-        if (!value) {
-            appState.deathExperiences.closeIllnessLevel = null;
-            // Clear any selected scale buttons
-            document.querySelectorAll('#closeIllnessScale .likert-option').forEach(btn => {
+        function setDeathExperience(question, value) {
+            appState.deathExperiences[question] = value;
+            
+            // Update button states
+            document.getElementById(`${question}-yes`).classList.toggle('selected', value === true);
+            document.getElementById(`${question}-no`).classList.toggle('selected', value === false);
+            
+            // Show/hide follow-up scales
+            if (question === 'closeIllness') {
+                document.getElementById('closeIllnessScale').style.display = value ? 'block' : 'none';
+                if (!value) {
+                    appState.deathExperiences.closeIllnessLevel = null;
+                    document.querySelectorAll('#closeIllnessScale .likert-option').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                }
+            }
+            
+            if (question === 'closeDying') {
+                document.getElementById('closeDyingScale').style.display = value ? 'block' : 'none';
+                if (!value) {
+                    appState.deathExperiences.closeDyingLevel = null;
+                    document.querySelectorAll('#closeDyingScale .likert-option').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                }
+            }
+            
+            checkDeathExperienceCompletion();
+        }
+
+        function setDeathExperienceScale(scale, value) {
+            appState.deathExperiences[scale] = value;
+            
+            // Update button states
+            const container = scale === 'closeIllnessLevel' ? 'closeIllnessScale' : 'closeDyingScale';
+            document.querySelectorAll(`#${container} .likert-option`).forEach(btn => {
                 btn.classList.remove('selected');
             });
+            document.querySelector(`#${container} .likert-option:nth-child(${value})`).classList.add('selected');
+            
+            checkDeathExperienceCompletion();
         }
-    }
-    
-    if (question === 'closeDying') {
-        document.getElementById('closeDyingScale').style.display = value ? 'block' : 'none';
-        if (!value) {
-            appState.deathExperiences.closeDyingLevel = null;
-            // Clear any selected scale buttons
-            document.querySelectorAll('#closeDyingScale .likert-option').forEach(btn => {
-                btn.classList.remove('selected');
-            });
+
+        function checkDeathExperienceCompletion() {
+            const de = appState.deathExperiences;
+            let isComplete = true;
+            
+            // Check all required fields
+            if (de.illness === null || de.closeIllness === null || de.closeDying === null || de.seenDie === null) {
+                isComplete = false;
+            }
+            
+            // Check follow-up questions if needed
+            if (de.closeIllness === true && de.closeIllnessLevel === null) {
+                isComplete = false;
+            }
+            if (de.closeDying === true && de.closeDyingLevel === null) {
+                isComplete = false;
+            }
+            
+            // Enable/disable continue button
+            const nextBtn = document.getElementById('deathExperienceNext');
+            if (isComplete) {
+                nextBtn.classList.add('enabled');
+            } else {
+                nextBtn.classList.remove('enabled');
+            }
         }
-    }
-    
-    checkDeathExperienceCompletion();
-}
-
-function setDeathExperienceScale(scale, value) {
-    appState.deathExperiences[scale] = value;
-    
-    // Update button states
-    const container = scale === 'closeIllnessLevel' ? 'closeIllnessScale' : 'closeDyingScale';
-    document.querySelectorAll(`#${container} .likert-option`).forEach(btn => {
-        btn.classList.remove('selected');
-    });
-    document.querySelector(`#${container} .likert-option:nth-child(${value})`).classList.add('selected');
-    
-    checkDeathExperienceCompletion();
-}
-
-function checkDeathExperienceCompletion() {
-    const de = appState.deathExperiences;
-    let isComplete = true;
-    
-    // Check all required fields
-    if (de.illness === null || de.closeIllness === null || de.closeDying === null || de.seenDie === null) {
-        isComplete = false;
-    }
-    
-    // Check follow-up questions if needed
-    if (de.closeIllness === true && de.closeIllnessLevel === null) {
-        isComplete = false;
-    }
-    if (de.closeDying === true && de.closeDyingLevel === null) {
-        isComplete = false;
-    }
-    
-    // Enable/disable continue button
-    const nextBtn = document.getElementById('deathExperienceNext');
-    if (isComplete) {
-        nextBtn.classList.add('enabled');
-    } else {
-        nextBtn.classList.remove('enabled');
-    }
-}
         
         // Display Current Question
         function displayQuestion() {
@@ -1346,6 +1420,118 @@ function checkDeathExperienceCompletion() {
             }
         }
         
+        // Get score interpretation with emoji
+        function getScoreInterpretation(subscale, rawScore) {
+            const mean = MMAMM.referenceData[subscale].mean;
+            const std = MMAMM.referenceData[subscale].std;
+            const zScore = (rawScore - mean) / std;
+            
+            // Determine if this subscale is "good when high" or "good when low"
+            const isGoodWhenHigh = (subscale === 'LEG' || subscale === 'ACC');
+            
+            let emoji, label, description, colorClass;
+            
+            if (isGoodWhenHigh) {
+                // Legacy and Acceptance: higher is better
+                if (zScore > 1) {
+                    emoji = '🤩';
+                    label = subscale === 'LEG' ? 'Deeply Legacy-Focused' : 'Deeply Integrated';
+                    description = subscale === 'LEG' ? 'Strong drive to create lasting impact' : 'Profound emotional integration of mortality';
+                    colorClass = 'score-high';
+                } else if (zScore > 0.5) {
+                    emoji = '🤩';
+                    label = subscale === 'LEG' ? 'Legacy-Driven' : 'Well-Integrated';
+                    description = subscale === 'LEG' ? 'Clear focus on leaving something behind' : 'Good emotional processing of life\'s finite nature';
+                    colorClass = 'score-high';
+                } else if (zScore > -0.5) {
+                    emoji = '☺️';
+                    label = subscale === 'LEG' ? 'Moderately Legacy-Minded' : 'Moderately Processed';
+                    description = subscale === 'LEG' ? 'Some interest in lasting impact' : 'Some emotional integration of mortality';
+                    colorClass = 'score-good';
+                } else if (zScore > -1) {
+                    emoji = '😕';
+                    label = subscale === 'LEG' ? 'Minimally Legacy-Focused' : 'Struggling to Process';
+                    description = subscale === 'LEG' ? 'Limited drive for lasting impact' : 'Difficulty emotionally integrating mortality';
+                    colorClass = 'score-moderate';
+                } else {
+                    emoji = '😔';
+                    label = subscale === 'LEG' ? 'No Legacy Drive' : 'Emotionally Unprocessed';
+                    description = subscale === 'LEG' ? 'Little interest in creating lasting impact' : 'Significant difficulty processing mortality reality';
+                    colorClass = 'score-problem';
+                }
+            } else {
+                // Fear, Disempowerment, Disengagement: lower is better
+                if (zScore < -1) {
+                    emoji = '🤩';
+                    if (subscale === 'FEAR') {
+                        label = 'Exceptionally Calm';
+                        description = 'Very low death-related anxiety';
+                    } else if (subscale === 'Disemp') {
+                        label = 'Feels Empowered';
+                        description = 'Doesn\'t feel powerless against mortality';
+                    } else { // Diseng
+                        label = 'Mortality-Engaged';
+                        description = 'Actively engages with mortality thoughts';
+                    }
+                    colorClass = 'score-high';
+                } else if (zScore < -0.5) {
+                    emoji = '☺️';
+                    if (subscale === 'FEAR') {
+                        label = 'Well-Managed Fear';
+                        description = 'Low levels of death anxiety';
+                    } else if (subscale === 'Disemp') {
+                        label = 'Generally Empowered';
+                        description = 'Low feelings of helplessness about death';
+                    } else { // Diseng
+                        label = 'Generally Engaged';
+                        description = 'Comfortable thinking about mortality';
+                    }
+                    colorClass = 'score-good';
+                } else if (zScore < 0.5) {
+                    emoji = '😕';
+                    if (subscale === 'FEAR') {
+                        label = 'Moderate Fear Levels';
+                        description = 'Typical death-related concerns';
+                    } else if (subscale === 'Disemp') {
+                        label = 'Mixed Feelings';
+                        description = 'Sometimes feels powerless about mortality';
+                    } else { // Diseng
+                        label = 'Sometimes Avoidant';
+                        description = 'Occasional avoidance of death thoughts';
+                    }
+                    colorClass = 'score-moderate';
+                } else if (zScore < 1) {
+                    emoji = '😔';
+                    if (subscale === 'FEAR') {
+                        label = 'Elevated Anxiety';
+                        description = 'High levels of death-related fear';
+                    } else if (subscale === 'Disemp') {
+                        label = 'Often Feels Powerless';
+                        description = 'Frequent feelings of helplessness against death';
+                    } else { // Diseng
+                        label = 'Actively Avoidant';
+                        description = 'Frequently avoids mortality awareness';
+                    }
+                    colorClass = 'score-problem';
+                } else {
+                    emoji = '😔';
+                    if (subscale === 'FEAR') {
+                        label = 'Intense Death Anxiety';
+                        description = 'Very high fear and distress';
+                    } else if (subscale === 'Disemp') {
+                        label = 'Deeply Powerless';
+                        description = 'Overwhelming sense of vulnerability and helplessness';
+                    } else { // Diseng
+                        label = 'Completely Withdrawn';
+                        description = 'Persistent withdrawal from mortality thoughts';
+                    }
+                    colorClass = 'score-problem';
+                }
+            }
+            
+            return { emoji, label, description, colorClass };
+        }
+        
         // Calculate Results
         async function calculateResults() {
             const results = MMAMM.scoring.processResponses(appState.responses);
@@ -1379,72 +1565,69 @@ function checkDeathExperienceCompletion() {
             // Display archetype
             document.getElementById('archetypeName').textContent = results.archetype.name;
             document.getElementById('archetypeDescription').textContent = results.archetype.description;
-            // Set archetype image
-const imageMap = {
-    'The Fearful Visionary': 'fearful-visionary.png',
-    'The Legacy Dreamer': 'legacy-dreamer.png',
-    'The Mortality Denier': 'mortality-denier.png',
-    'The Mortality Shadow': 'mortality-shadow.png',
-    'The Mortality Drifter': 'mortality-drifter.png',
-    'The Mortality Champion': 'mortality-champion.png',
-    'The Legacy Weaver': 'legacy-weaver.png'
-};
-
-const archetypeImage = document.getElementById('archetypeImage');
-const imagePath = imageMap[results.archetype.name];  // Use results.archetype.name
-if (imagePath) {
-    archetypeImage.src = imagePath;
-    archetypeImage.alt = `${results.archetype.name} illustration`;
-} else {
-    // Hide image if no matching image found
-    archetypeImage.style.display = 'none';
-}
             
-            // Create bar charts
-            createBarCharts(results.rawScores);
+            // Set archetype image
+            const imageMap = {
+                'The Fearful Visionary': 'fearful-visionary.png',
+                'The Legacy Dreamer': 'legacy-dreamer.png',
+                'The Mortality Denier': 'mortality-denier.png',
+                'The Mortality Shadow': 'mortality-shadow.png',
+                'The Mortality Drifter': 'mortality-drifter.png',
+                'The Mortality Champion': 'mortality-champion.png',
+                'The Legacy Weaver': 'legacy-weaver.png'
+            };
+
+            const archetypeImage = document.getElementById('archetypeImage');
+            const imagePath = imageMap[results.archetype.name];
+            if (imagePath) {
+                archetypeImage.src = imagePath;
+                archetypeImage.alt = `${results.archetype.name} illustration`;
+            } else {
+                // Hide image if no matching image found
+                archetypeImage.style.display = 'none';
+            }
+            
+            // Create modern score display
+            createModernScoreDisplay(results.rawScores);
             
             showScreen('results');
             document.getElementById('progressContainer').classList.remove('show');
         }
         
-        // Create Bar Charts
-        function createBarCharts(rawScores) {
-            const chartContainer = document.getElementById('chartContainer');
-            chartContainer.innerHTML = '<h3>Your subscale scores</h3>';
+        // Create Modern Score Display with Emojis
+        function createModernScoreDisplay(rawScores) {
+            const scoresContainer = document.getElementById('scoresContainer');
             
             const subscaleOrder = ['LEG', 'FEAR', 'ACC', 'Disemp', 'Diseng'];
+            
+            let scoreRowsHtml = '';
             
             subscaleOrder.forEach(key => {
                 const score = rawScores[key];
                 const subscale = MMAMM.subscales[key];
-                const percentage = (score / 7) * 100;
+                const interpretation = getScoreInterpretation(key, score);
                 
-                const chartHtml = `
-                    <div class="subscale-chart">
-                        <div class="subscale-name">${subscale.name}</div>
-                        <div class="bar-wrapper">
-                            <div class="bar-fill" style="width: 0%" data-percentage="${percentage}">
-                                <span class="bar-score">${score.toFixed(1)}</span>
-                            </div>
+                scoreRowsHtml += `
+                    <div class="score-row">
+                        <div class="score-category">${subscale.name}</div>
+                        <div class="score-emoji">${interpretation.emoji}</div>
+                        <div class="score-status">
+                            <div class="score-label">${interpretation.label}</div>
+                            <div class="score-description">${interpretation.description}</div>
                         </div>
+                        <div class="score-value ${interpretation.colorClass}">${score.toFixed(1)}/7</div>
                     </div>
                 `;
-                
-                chartContainer.innerHTML += chartHtml;
             });
             
-            setTimeout(() => {
-                document.querySelectorAll('.bar-fill').forEach(bar => {
-                    const percentage = bar.getAttribute('data-percentage');
-                    bar.style.width = percentage + '%';
-                });
-            }, 100);
+            scoresContainer.innerHTML = scoreRowsHtml;
         }
         
         // Email Modal Functions        
-function showEmailModal() {
-    document.getElementById('emailModal').classList.add('show');
-}
+        function showEmailModal() {
+            document.getElementById('emailModal').classList.add('show');
+        }
+        
         function closeEmailModal() {
             document.getElementById('emailModal').classList.remove('show');
             document.getElementById('successMessage').classList.remove('show');
@@ -1452,8 +1635,8 @@ function showEmailModal() {
             document.getElementById('email').value = '';
         }
         
-        // Generate score interpretations
-        function getScoreInterpretation(subscale, rawScore) {
+        // Generate score interpretations for email
+        function getEmailScoreInterpretation(subscale, rawScore) {
             const mean = MMAMM.referenceData[subscale].mean;
             const std = MMAMM.referenceData[subscale].std;
             const zScore = (rawScore - mean) / std;
@@ -1540,11 +1723,11 @@ function showEmailModal() {
                 acc_score: appState.results.rawScores.ACC.toFixed(2),
                 disemp_score: appState.results.rawScores.Disemp.toFixed(2),
                 diseng_score: appState.results.rawScores.Diseng.toFixed(2),
-                leg_interpretation: getScoreInterpretation('LEG', appState.results.rawScores.LEG),
-                fear_interpretation: getScoreInterpretation('FEAR', appState.results.rawScores.FEAR),
-                acc_interpretation: getScoreInterpretation('ACC', appState.results.rawScores.ACC),
-                disemp_interpretation: getScoreInterpretation('Disemp', appState.results.rawScores.Disemp),
-                diseng_interpretation: getScoreInterpretation('Diseng', appState.results.rawScores.Diseng)
+                leg_interpretation: getEmailScoreInterpretation('LEG', appState.results.rawScores.LEG),
+                fear_interpretation: getEmailScoreInterpretation('FEAR', appState.results.rawScores.FEAR),
+                acc_interpretation: getEmailScoreInterpretation('ACC', appState.results.rawScores.ACC),
+                disemp_interpretation: getEmailScoreInterpretation('Disemp', appState.results.rawScores.Disemp),
+                diseng_interpretation: getEmailScoreInterpretation('Diseng', appState.results.rawScores.Diseng)
             };
             
             try {
