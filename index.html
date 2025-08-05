@@ -1878,37 +1878,101 @@ async function sendEmail() {
         
         return detailedText;
     }
+
     
+    // NEW FUNCTION - Helper function to get personalized insights for email
+    function getPersonalizedInsight(subscale, rawScore) {
+        const mean = MMAMM.referenceData[subscale].mean;
+        const std = MMAMM.referenceData[subscale].std;
+        const zScore = (rawScore - mean) / std;
+        
+        if (subscale === 'LEG') {
+            if (zScore > 0.5) {
+                return "Your strong legacy drive suggests you find deep meaning in creating something that will outlast you. Consider channeling this energy into concrete projects - whether that's mentoring others, creating art, or building institutions. The key is to start now rather than waiting for the 'perfect' moment.";
+            } else if (zScore < -0.5) {
+                return "You're less focused on traditional legacy, which can be liberating. You might find more meaning in present-moment experiences and immediate connections rather than future monuments. This perspective allows you to live more fully in the now.";
+            } else {
+                return "Your balanced approach to legacy allows you to appreciate both present experiences and future impact. You can create meaningful contributions without being consumed by them.";
+            }
+        } else if (subscale === 'FEAR') {
+            if (zScore < -0.5) {
+                return "Your low death anxiety is a strength that allows you to engage with life more fully. You can discuss mortality without significant distress, which helps in making important life decisions.";
+            } else if (zScore > 0.5) {
+                return "Your heightened awareness of mortality creates anxiety that may be limiting your choices. Consider exploring what specific aspects of death concern you most - often naming fears reduces their power.";
+            } else {
+                return "You experience typical levels of death-related concern. This natural anxiety can be a motivator without being overwhelming.";
+            }
+        } else if (subscale === 'ACC') {
+            if (zScore > 0.5) {
+                return "Your acceptance of mortality is a profound strength. This emotional integration allows you to make decisions from a place of wisdom rather than fear, and to appreciate life's preciousness.";
+            } else if (zScore < -0.5) {
+                return "You're still processing the reality of mortality, which is completely normal. Acceptance often develops through life experience and reflection. There's no rush to 'accept' death - work with where you are.";
+            } else {
+                return "You're in the process of integrating mortality into your worldview. This ongoing journey of acceptance can deepen your appreciation for life.";
+            }
+        } else if (subscale === 'Disemp') {
+            if (zScore < -0.5) {
+                return "You maintain a sense of agency despite mortality's inevitability. This empowerment allows you to take meaningful action rather than feeling paralyzed by life's finite nature.";
+            } else if (zScore > 0.5) {
+                return "Feeling powerless against mortality is affecting your sense of agency. Remember that while death is inevitable, how you live is entirely in your control. Small, meaningful actions can restore your sense of power.";
+            } else {
+                return "You sometimes struggle with feelings of powerlessness about mortality. This is a common human experience - finding areas where you do have control can help balance these feelings.";
+            }
+        } else if (subscale === 'Diseng') {
+            if (zScore < -0.5) {
+                return "You actively engage with thoughts about mortality rather than avoiding them. This engagement, while sometimes uncomfortable, often leads to more intentional living and clearer priorities.";
+            } else if (zScore > 0.5) {
+                return "You tend to avoid thinking about death, which is a common protective mechanism. While this can reduce anxiety short-term, gradual engagement with mortality (at your own pace) often leads to greater life satisfaction.";
+            } else {
+                return "You have a moderate level of engagement with mortality thoughts. This balance allows you to function without obsessing, while still maintaining some awareness of life's finite nature.";
+            }
+        }
+    }
     // Prepare email data with detailed interpretations
-    const templateParams = {
+    // In the templateParams, update to include all the separate parts:
+const templateParams = {
     to_email: email,
     user_name: firstName,
     archetype_name: appState.results.archetype.name,
     archetype_description: appState.results.archetype.description,
-    
-    // Add archetype image URL
-    archetype_image_url: `https://yourdomain.com/${appState.results.archetype.name.toLowerCase().replace(/ /g, '-')}.png`,
+    archetype_image_url: `${appState.results.archetype.name.toLowerCase().replace('the ', '').replace(/ /g, '-')}.png`,
     
     // Scores
-    leg_score: appState.results.rawScores.LEG.toFixed(2),
-    fear_score: appState.results.rawScores.FEAR.toFixed(2),
-    acc_score: appState.results.rawScores.ACC.toFixed(2),
-    disemp_score: appState.results.rawScores.Disemp.toFixed(2),
-    diseng_score: appState.results.rawScores.Diseng.toFixed(2),
+    leg_score: appState.results.rawScores.LEG.toFixed(1),
+    fear_score: appState.results.rawScores.FEAR.toFixed(1),
+    acc_score: appState.results.rawScores.ACC.toFixed(1),
+    disemp_score: appState.results.rawScores.Disemp.toFixed(1),
+    diseng_score: appState.results.rawScores.Diseng.toFixed(1),
     
-    // Add emojis for each score
+    // Legacy
     leg_emoji: getScoreInterpretation('LEG', appState.results.rawScores.LEG).emoji,
-    fear_emoji: getScoreInterpretation('FEAR', appState.results.rawScores.FEAR).emoji,
-    acc_emoji: getScoreInterpretation('ACC', appState.results.rawScores.ACC).emoji,
-    disemp_emoji: getScoreInterpretation('Disemp', appState.results.rawScores.Disemp).emoji,
-    diseng_emoji: getScoreInterpretation('Diseng', appState.results.rawScores.Diseng).emoji,
+    leg_label: getScoreInterpretation('LEG', appState.results.rawScores.LEG).label,
+    leg_description: getScoreInterpretation('LEG', appState.results.rawScores.LEG).description,
+    leg_insight: getPersonalizedInsight('LEG', appState.results.rawScores.LEG),
     
-    // Detailed interpretations
-    leg_interpretation: getDetailedEmailInterpretation('LEG', appState.results.rawScores.LEG),
-    fear_interpretation: getDetailedEmailInterpretation('FEAR', appState.results.rawScores.FEAR),
-    acc_interpretation: getDetailedEmailInterpretation('ACC', appState.results.rawScores.ACC),
-    disemp_interpretation: getDetailedEmailInterpretation('Disemp', appState.results.rawScores.Disemp),
-    diseng_interpretation: getDetailedEmailInterpretation('Diseng', appState.results.rawScores.Diseng)
+    // Fear
+    fear_emoji: getScoreInterpretation('FEAR', appState.results.rawScores.FEAR).emoji,
+    fear_label: getScoreInterpretation('FEAR', appState.results.rawScores.FEAR).label,
+    fear_description: getScoreInterpretation('FEAR', appState.results.rawScores.FEAR).description,
+    fear_insight: getPersonalizedInsight('FEAR', appState.results.rawScores.FEAR),
+    
+    // Acceptance
+    acc_emoji: getScoreInterpretation('ACC', appState.results.rawScores.ACC).emoji,
+    acc_label: getScoreInterpretation('ACC', appState.results.rawScores.ACC).label,
+    acc_description: getScoreInterpretation('ACC', appState.results.rawScores.ACC).description,
+    acc_insight: getPersonalizedInsight('ACC', appState.results.rawScores.ACC),
+    
+    // Disempowerment
+    disemp_emoji: getScoreInterpretation('Disemp', appState.results.rawScores.Disemp).emoji,
+    disemp_label: getScoreInterpretation('Disemp', appState.results.rawScores.Disemp).label,
+    disemp_description: getScoreInterpretation('Disemp', appState.results.rawScores.Disemp).description,
+    disemp_insight: getPersonalizedInsight('Disemp', appState.results.rawScores.Disemp),
+    
+    // Disengagement
+    diseng_emoji: getScoreInterpretation('Diseng', appState.results.rawScores.Diseng).emoji,
+    diseng_label: getScoreInterpretation('Diseng', appState.results.rawScores.Diseng).label,
+    diseng_description: getScoreInterpretation('Diseng', appState.results.rawScores.Diseng).description,
+    diseng_insight: getPersonalizedInsight('Diseng', appState.results.rawScores.Diseng)
 };
     
     try {
