@@ -1881,21 +1881,35 @@ async function sendEmail() {
     
     // Prepare email data with detailed interpretations
     const templateParams = {
-        to_email: email,
-        user_name: firstName,
-        archetype_name: appState.results.archetype.name,
-        archetype_description: appState.results.archetype.description,
-        leg_score: appState.results.rawScores.LEG.toFixed(2),
-        fear_score: appState.results.rawScores.FEAR.toFixed(2),
-        acc_score: appState.results.rawScores.ACC.toFixed(2),
-        disemp_score: appState.results.rawScores.Disemp.toFixed(2),
-        diseng_score: appState.results.rawScores.Diseng.toFixed(2),
-        leg_interpretation: getDetailedEmailInterpretation('LEG', appState.results.rawScores.LEG),
-        fear_interpretation: getDetailedEmailInterpretation('FEAR', appState.results.rawScores.FEAR),
-        acc_interpretation: getDetailedEmailInterpretation('ACC', appState.results.rawScores.ACC),
-        disemp_interpretation: getDetailedEmailInterpretation('Disemp', appState.results.rawScores.Disemp),
-        diseng_interpretation: getDetailedEmailInterpretation('Diseng', appState.results.rawScores.Diseng)
-    };
+    to_email: email,
+    user_name: firstName,
+    archetype_name: appState.results.archetype.name,
+    archetype_description: appState.results.archetype.description,
+    
+    // Add archetype image URL
+    archetype_image_url: `https://yourdomain.com/${appState.results.archetype.name.toLowerCase().replace(/ /g, '-')}.png`,
+    
+    // Scores
+    leg_score: appState.results.rawScores.LEG.toFixed(2),
+    fear_score: appState.results.rawScores.FEAR.toFixed(2),
+    acc_score: appState.results.rawScores.ACC.toFixed(2),
+    disemp_score: appState.results.rawScores.Disemp.toFixed(2),
+    diseng_score: appState.results.rawScores.Diseng.toFixed(2),
+    
+    // Add emojis for each score
+    leg_emoji: getScoreInterpretation('LEG', appState.results.rawScores.LEG).emoji,
+    fear_emoji: getScoreInterpretation('FEAR', appState.results.rawScores.FEAR).emoji,
+    acc_emoji: getScoreInterpretation('ACC', appState.results.rawScores.ACC).emoji,
+    disemp_emoji: getScoreInterpretation('Disemp', appState.results.rawScores.Disemp).emoji,
+    diseng_emoji: getScoreInterpretation('Diseng', appState.results.rawScores.Diseng).emoji,
+    
+    // Detailed interpretations
+    leg_interpretation: getDetailedEmailInterpretation('LEG', appState.results.rawScores.LEG),
+    fear_interpretation: getDetailedEmailInterpretation('FEAR', appState.results.rawScores.FEAR),
+    acc_interpretation: getDetailedEmailInterpretation('ACC', appState.results.rawScores.ACC),
+    disemp_interpretation: getDetailedEmailInterpretation('Disemp', appState.results.rawScores.Disemp),
+    diseng_interpretation: getDetailedEmailInterpretation('Diseng', appState.results.rawScores.Diseng)
+};
     
     try {
         const response = await emailjs.send('service_cym10iv', 'template_zj4e18l', templateParams);
