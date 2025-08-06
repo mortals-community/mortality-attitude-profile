@@ -224,6 +224,98 @@
             margin-bottom: 2rem;
             color: var(--gray-medium);
         }
+
+        /* Add these styles to your existing <style> section */
+
+/* Feedback Section */
+.feedback-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.feedback-section h3 {
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.feedback-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.feedback-btn {
+    background: white;
+    color: var(--text-dark);
+    border: 2px solid var(--gray-light);
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Solway', serif;
+}
+
+.feedback-btn:hover {
+    border-color: var(--orange-accent);
+    background: var(--orange-accent);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.feedback-btn:active {
+    transform: translateY(0);
+}
+
+#additionalFeedback {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid var(--gray-light);
+    border-radius: 8px;
+    background: white;
+    font-family: 'Solway', serif;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    resize: vertical;
+    min-height: 80px;
+}
+
+#additionalFeedback:focus {
+    outline: none;
+    border-color: var(--orange-accent);
+}
+
+#additionalFeedback::placeholder {
+    color: var(--gray-medium);
+}
+
+/* Mobile responsive for feedback */
+@media (max-width: 768px) {
+    .feedback-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .feedback-btn {
+        width: 200px;
+        padding: 10px 16px;
+    }
+    
+    .feedback-section {
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+}
         
         /* Button Styles */
         .btn {
@@ -1030,6 +1122,21 @@
                             <!-- Score rows will be dynamically inserted here -->
                         </div>
                     </div>
+
+<!-- Add to results section -->
+<div class="feedback-section">
+    <h3>What do you think?</h3>
+    <div class="feedback-buttons">
+        <button class="feedback-btn" onclick="submitFeedback('easy')">Easy to use</button>
+        <button class="feedback-btn" onclick="submitFeedback('confusing')">Confusing</button>
+        <button class="feedback-btn" onclick="submitFeedback('accurate')">Results feel accurate</button>
+        <button class="feedback-btn" onclick="submitFeedback('inaccurate')">Results don't fit me</button>
+        <button class="feedback-btn" onclick="submitFeedback('too-long')">Too long</button>
+        <button class="feedback-btn" onclick="submitFeedback('just-right')">Perfect length</button>
+    </div>
+    <textarea id="additionalFeedback" placeholder="Any other thoughts? (optional)" maxlength="500"></textarea>
+    <button class="btn-secondary" onclick="submitDetailedFeedback()">Send Feedback</button>
+</div>
                     
                     <div class="button-group">
                         <button class="btn" onclick="showEmailModal()">Email my full results</button>
@@ -2013,6 +2120,76 @@ const templateParams = {
                 }
             }, 2000);
         });
+
+        // Add these functions to your existing script section
+
+// Quick feedback function
+function submitFeedback(feedbackType) {
+    if (!window.firebaseDB) {
+        console.log('Feedback:', feedbackType);
+        showStatus('Feedback recorded (offline mode)');
+        return;
+    }
+    
+    try {
+        const feedbackRef = window.firebaseRef(window.firebaseDB, 'feedback');
+        window.firebasePush(feedbackRef, {
+            sessionId: appState.sessionId,
+            feedbackType: feedbackType,
+            timestamp: new Date().toISOString(),
+            archetype: appState.results?.archetype?.name || 'unknown'
+        });
+        
+        // Visual feedback to user
+        showStatus('Thanks for your feedback!');
+        
+        // Highlight the clicked button
+        event.target.style.background = '#4CAF50';
+        event.target.style.color = 'white';
+        setTimeout(() => {
+            event.target.style.background = '';
+            event.target.style.color = '';
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error saving feedback:', error);
+        showStatus('Feedback saved locally');
+    }
+}
+
+// Detailed feedback function
+function submitDetailedFeedback() {
+    const additionalText = document.getElementById('additionalFeedback').value.trim();
+    
+    if (!additionalText) {
+        alert('Please enter some feedback before submitting');
+        return;
+    }
+    
+    if (!window.firebaseDB) {
+        console.log('Detailed feedback:', additionalText);
+        showStatus('Feedback recorded (offline mode)');
+        document.getElementById('additionalFeedback').value = '';
+        return;
+    }
+    
+    try {
+        const feedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+        window.firebasePush(feedbackRef, {
+            sessionId: appState.sessionId,
+            feedback: additionalText,
+            timestamp: new Date().toISOString(),
+            archetype: appState.results?.archetype?.name || 'unknown'
+        });
+        
+        showStatus('Thanks for your detailed feedback!');
+        document.getElementById('additionalFeedback').value = '';
+        
+    } catch (error) {
+        console.error('Error saving detailed feedback:', error);
+        showStatus('Feedback saved locally');
+    }
+}
     </script>
 </body>
 </html>
