@@ -755,67 +755,103 @@
     
     /* MOBILE STYLES - ALL IN ONE PLACE */
     @media (max-width: 768px) {
-        /* MOBILE STYLES - FIXED VERSION */
+/* MOBILE STYLES - SIMPLIFIED AND FIXED */
 @media (max-width: 768px) {
-    /* Fix screens for mobile */
+    /* Base mobile setup */
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    /* Screens should be scrollable */
     .screen {
-        position: fixed !important;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        overflow-y: auto !important;
+        overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+        padding: 20px;
+    }
+    
+    /* Content container */
+    .content {
+        width: 100%;
+        max-width: 100%;
+        padding: 20px;
+        margin-bottom: 100px;
+    }
+    
+    /* Landing screen specific */
+    #landingScreen {
         display: flex;
         align-items: flex-start;
-        padding-top: 20px;
-        padding-bottom: 100px;
+        padding-top: 40px;
     }
     
-    /* Landing screen specific - FIXED */
-    #landingScreen {
-        align-items: center !important;
-        justify-content: center !important;
+    /* Landing image - smaller on mobile */
+    .landing-image {
+        width: 120px !important;
+        height: 120px !important;
+        margin: 0 auto 20px auto !important;
+        display: block !important;
     }
     
-    #landingScreen .content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        padding: 20px;
-        padding-bottom: 120px;
+    /* Typography for mobile */
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
     }
     
-    /* FIXED BUTTON STYLES FOR MOBILE */
+    h2 {
+        font-size: 1.4rem;
+    }
+    
+    p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Buttons - simple and working */
     .btn {
-        display: inline-block !important;
-        width: auto !important;
-        min-width: 200px !important;
-        max-width: 300px !important;
-        margin: 20px auto !important;
-        padding: 16px 32px !important;
-        font-size: 1rem !important;
-        position: relative !important;
-        z-index: 999 !important;
-        -webkit-tap-highlight-color: transparent !important;
-        touch-action: manipulation !important;
-        cursor: pointer !important;
-        pointer-events: auto !important;
+        display: block;
+        width: 80%;
+        max-width: 250px;
+        margin: 20px auto;
+        padding: 15px 30px;
+        font-size: 1rem;
+        position: relative;
+        z-index: 100;
     }
     
-    /* Specific fix for landing button */
-    #landingScreen .btn {
-        z-index: 9999 !important;
-        pointer-events: auto !important;
-    }
-    
-    /* Make sure footer doesn't block */
+    /* Footer at bottom */
     .brand-footer {
-        bottom: 10px !important;
-        z-index: 1 !important;
-        pointer-events: none !important;
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+    
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+    
+    /* Other mobile adjustments */
+    .question-text {
+        font-size: 1.1rem;
+    }
+    
+    .likert-option {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .results-container {
+        padding: 1.5rem;
     }
 }
     
@@ -849,15 +885,6 @@
         }
     }
 
-    #landingScreen .btn {
-    display: inline-block !important;
-    width: auto !important;
-    min-width: 200px !important;
-    margin: 20px auto !important;
-    z-index: 9999 !important;
-    position: relative !important;
-    pointer-events: auto !important;
-}
 /* Ensure no overlay blocks the button */
 #landingScreen * {
     pointer-events: auto;
@@ -895,7 +922,7 @@
         <img src="map-landing.png" alt="MAP" class="landing-image">
         <h1>Discover what really drives you</h1>
         <p>Death is the one experience we all share, yet each of us relates to it differently. Some of us are driven to create lasting legacies. Others find peace in acceptance. Many experience fear, while some simply disengage from the topic entirely.</p>
-        <button class="btn" id="landingBtn" onclick="startAssessment()" style="z-index: 9999; position: relative;">What drives you?</button>
+        <button class="btn" onclick="startAssessment()">What drives you?</button>
     </div>
 </div>
 
@@ -1228,9 +1255,9 @@
     </div>
     
     <script>
-// Ensure function is globally accessible IMMEDIATELY
-window.startAssessment = function() {
-    console.log('startAssessment called');
+// Make function available immediately
+function startAssessment() {
+    console.log('Starting assessment...');
     appState = {
         currentScreen: 'intro1',
         currentQuestion: 0,
@@ -1240,16 +1267,24 @@ window.startAssessment = function() {
             illness: null,
             closeIllness: null,
             closeIllnessLevel: null,
-            closeDying: null,
             closeDyingLevel: null,
             seenDie: null
         },
         selectedOption: null,
         results: null,
-        sessionId: generateSessionId()
+        sessionId: 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
     };
-    showScreen('intro1');
-};
+    
+    // Show intro1 screen
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => {
+        screen.classList.remove('active', 'exit');
+    });
+    
+    setTimeout(() => {
+        document.getElementById('intro1Screen').classList.add('active');
+    }, 100);
+}
         // MMAMM Core Logic (unchanged from original)
         const MMAMM = {
             questions: [
