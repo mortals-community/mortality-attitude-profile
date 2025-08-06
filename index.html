@@ -2042,45 +2042,37 @@
        }
        
        async function submitDetailedFeedback() {
-           const feedbackText = document.getElementById('additionalFeedback').value.trim();
-           
-           if (!feedbackText) {
-               showStatus('Please enter some feedback first');
-               return;
-           }
-           
-           try {
-               const detailedFeedbackData = {
-                   feedback: feedbackText,
-                   sessionId: appState.sessionId,
-                   archetype: appState.results?.archetype?.name || 'Unknown',
-                   timestamp: new Date().toISOString()
-               };
-               
-               if (window.firebaseDB && window.firebaseInitialized) {
-                   const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
-                   await window.firebasePush(detailedFeedbackRef, detailedFeedbackData);
-               }
-               
-               // Clear and disable
-               const textArea = document.getElementById('additionalFeedback');
-               textArea.value = '';
-               textArea.placeholder = 'Thank you for your feedback!';
-               textArea.disabled = true;
-               
-               const sendBtn = event.target;
-               if (sendBtn) {
-                   sendBtn.disabled = true;
-                   sendBtn.textContent = 'Feedback Sent!';
-               }
-               
-               showStatus('Thank you for your detailed feedback!');
-               
-           } catch (error) {
-               console.error('Error saving detailed feedback:', error);
-               showStatus('Thank you for your feedback!');
-           }
-       }
+    const feedbackText = document.getElementById('additionalFeedback').value.trim();
+    
+    if (!feedbackText) {
+        showStatus('Please enter some feedback first');
+        return;
+    }
+    
+    try {
+        const detailedFeedbackData = {
+            feedback: feedbackText,
+            sessionId: appState.sessionId,
+            archetype: appState.results?.archetype?.name || 'Unknown',
+            timestamp: new Date().toISOString()
+        };
+        
+        if (window.firebaseDB && window.firebaseInitialized) {
+            const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+            await window.firebasePush(detailedFeedbackRef, detailedFeedbackData);
+        }
+        
+        // Clear the text box and show confirmation
+        document.getElementById('additionalFeedback').value = '';
+        document.getElementById('additionalFeedback').placeholder = 'Thank you! Your feedback was sent.';
+        
+        showStatus('Thank you for your detailed feedback!', 3000);
+        
+    } catch (error) {
+        console.error('Error saving detailed feedback:', error);
+        showStatus('Thank you for your feedback!');
+    }
+}
        
        // Email Functions
        function showEmailModal() {
