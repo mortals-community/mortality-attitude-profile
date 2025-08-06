@@ -492,9 +492,11 @@
         
         /* Results - Fixed scrolling issues */
         #resultsScreen {
-            padding-top: 60px; /* Space for progress bar if shown */
-            padding-bottom: 100px; /* Space for footer */
-        }
+            padding-top: 60px;
+    padding-bottom: 120px; /* More space for footer */
+    min-height: 100vh;
+    overflow-y: auto;
+}
 
         .results-container {
             padding: var(--spacing-xl);
@@ -1925,11 +1927,18 @@
            };
 
            const archetypeImage = document.getElementById('archetypeImage');
-           const imagePath = imageMap[results.archetype.name];
-           if (imagePath && archetypeImage) {
-               archetypeImage.src = imagePath;
-               archetypeImage.alt = `${results.archetype.name} illustration`;
-           }
+const imagePath = imageMap[results.archetype.name];
+if (imagePath && archetypeImage) {
+    archetypeImage.src = imagePath;
+    archetypeImage.alt = `${results.archetype.name} illustration`;
+    
+    // Add error handling
+    archetypeImage.onerror = function() {
+        this.style.display = 'none';
+        // Or set a default image:
+        // this.src = 'default-archetype.png';
+    };
+}
            
            createModernScoreDisplay(results.rawScores);
            
