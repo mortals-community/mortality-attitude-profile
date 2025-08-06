@@ -1348,6 +1348,22 @@
     </div>
     
     <script>
+        // Debug code to test button clicks
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click listener to all buttons
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('touchstart', function(e) {
+            console.log('Button touched:', this.textContent);
+            this.style.background = 'red';
+        });
+        button.addEventListener('click', function(e) {
+            console.log('Button clicked:', this.textContent);
+        });
+    });
+    
+    // Make sure startAssessment is accessible
+    window.startAssessment = startAssessment;
+});
         // MMAMM Core Logic (unchanged from original)
         const MMAMM = {
             questions: [
