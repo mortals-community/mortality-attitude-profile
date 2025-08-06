@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Discover your Mortality Type - Mortals</title>
     
     <!-- Google Fonts - Solway -->
@@ -91,12 +91,12 @@
         }
         
         body {
-            font-family: 'Solway', serif;
-            background-color: var(--primary-white);
-            color: var(--text-dark);
-            overflow: hidden;
-            height: 100vh;
-        }
+    font-family: 'Solway', serif;
+    background-color: var(--primary-white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
         
         /* Brand Footer */
         .brand-footer {
@@ -120,11 +120,11 @@
         
         /* Container for all screens */
         .app-container {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
         
         /* Progress Bar */
         .progress-container {
@@ -167,16 +167,19 @@
         
         /* Screen Styles */
         .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(100vh);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
+    position: absolute;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(100vh);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    padding: 20px 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
         
         .screen.active {
             opacity: 1;
@@ -187,6 +190,16 @@
             opacity: 0;
             transform: translateY(-100vh);
         }
+
+        #landingScreen {
+    min-height: 100vh;
+    height: auto;
+}
+
+#landingScreen .content {
+    padding-top: 40px;
+    padding-bottom: 100px; /* Space for the button and logo */
+}
         
         .content {
             width: 90%;
@@ -297,6 +310,17 @@
 
 /* Mobile responsive for feedback */
 @media (max-width: 768px) {
+    .screen {
+        min-height: 100vh;
+        height: auto;
+        padding: 40px 0 100px 0; /* Top and bottom padding */
+    }
+    
+    .content {
+        padding: 20px;
+        max-height: none; /* Remove any height restrictions */
+    }
+    
     .feedback-buttons {
         flex-direction: column;
         align-items: center;
@@ -783,8 +807,16 @@
             }
             
             .brand-footer {
-                bottom: 10px;
-            }
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+    }
+
+            .btn {
+        margin-bottom: 20px;
+    }
             
             .logo {
                 width: 40px;
@@ -844,7 +876,7 @@
     <!-- Updated Landing Screen with image -->
 <div class="screen active" id="landingScreen">
     <div class="content">
-        <img src="map-landing.png" alt="MAP" style="width: 280px; height: 280px; margin-bottom: 2rem; object-fit: contain;">
+        <img src="map-landing.png" alt="MAP" style="width: 280px; height: 280px; max-width: 70vw; max-height: 40vh; margin-bottom: 2rem; object-fit: contain;">
         <h1>Discover what really drives you</h1>
         <p>Death is the one experience we all share, yet each of us relates to it differently. Some of us are driven to create lasting legacies. Others find peace in acceptance. Many experience fear, while some simply disengage from the topic entirely.</p>
         <button class="btn" onclick="startAssessment()">Curious?</button>
