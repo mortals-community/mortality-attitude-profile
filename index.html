@@ -902,9 +902,11 @@
 <div class="screen active" id="landingScreen">
     <div class="content">
         <img src="map-landing.png" alt="MAP" class="landing-image">
-        <h1>Discover what really drives you</h1>
-        <p>Death is the one experience we all share, yet each of us relates to it differently. Some of us are driven to create lasting legacies. Others find peace in acceptance. Many experience fear, while some simply disengage from the topic entirely.</p>
-        <button class="btn" onclick="startAssessment()" ontouchend="startAssessment(); event.preventDefault();">What drives you?</button>
+        <h1>Nobody wants to think about death. Yet it shapes everything. </h1>
+<p>The career you chose. The risks you avoid. The legacy you're building (or not building). The way you love. The dreams you're chasing or putting off.</p>
+<p>Some people are motivated by leaving their mark. Others find peace in acceptance. Many simply don't want to think about it at all.</p>
+<p style="margin-bottom: 2.5rem; font-weight: 400;">What if knowing your unique relationship with mortality could change how you live today?</p>
+        <button class="btn" onclick="startAssessment()" ontouchend="startAssessment(); event.preventDefault();">Discover what drives you</button>
     </div>
 </div>
 
@@ -1255,34 +1257,6 @@
 </div>
     
     <script>
-        // Debug code - add this FIRST in your script
-window.addEventListener('load', function() {
-    // Check if function exists
-    if (typeof startAssessment === 'function') {
-        alert('startAssessment exists');
-    } else {
-        alert('startAssessment NOT found');
-    }
-    
-    // Find the button
-    const btn = document.querySelector('#landingScreen .btn');
-    if (btn) {
-        alert('Button found: ' + btn.textContent);
-        
-        // Add a direct listener
-        btn.addEventListener('click', function(e) {
-            alert('Button clicked via listener');
-            startAssessment();
-        });
-    } else {
-        alert('Button NOT found');
-    }
-});
-
-// Also log any errors
-window.addEventListener('error', function(e) {
-    alert('Error: ' + e.message);
-});
 // Make function available immediately
 function startAssessment() {
     console.log('Starting assessment...');
