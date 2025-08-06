@@ -898,25 +898,7 @@
 </style>
 </head>
 <body>
-    <!-- Status Message -->
-    <div class="status-message" id="statusMessage"></div>
-    
-    <!-- Brand Footer -->
-    <div class="brand-footer">
-        <div class="logo">
-            <img src="mortals-logo.png" alt="Mortals Logo">
-        </div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="progress-container" id="progressContainer">
-        <div class="progress-text" id="progressText">Question 1 of 36</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-    </div>
-    
-    <!-- Updated Landing Screen with image -->
+        <!-- Updated Landing Screen with image -->
 <div class="screen active" id="landingScreen">
     <div class="content">
         <img src="map-landing.png" alt="MAP" class="landing-image">
@@ -1220,39 +1202,57 @@
     
     <!-- Email Modal -->
     <div class="modal" id="emailModal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeEmailModal()">&times;</button>
-            <h2>Get your full results</h2>
-            <p>Enter your details to receive an analysis of your mortality type and subscale scores.</p>
-            
-            <div class="form-group">
-                <label for="firstName">First name</label>
-                <input type="text" id="firstName" placeholder="Enter your first name">
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email address</label>
-                <input type="email" id="email" placeholder="Enter your email">
-            </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="emailConsent" checked>
-                <label for="emailConsent">
-                    I agree to receive occasional updates about mortality research and the Mortals community. I can unsubscribe at any time.
-                </label>
-            </div>
-            
-            <p class="gdpr-text">
-                Your data will be used for research purposes and to send you your results. We take your privacy seriously and will never sell or share your personal information with third parties.
-            </p>
-            
-            <button class="btn" id="sendEmailBtn" onclick="sendEmail()">Send results</button>
-            
-            <div class="success-message" id="successMessage">
-                Results sent successfully! Check your email.
-            </div>
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeEmailModal()">&times;</button>
+        <h2>Get your full results</h2>
+        <p>Enter your details to receive an analysis of your mortality type and subscale scores.</p>
+        
+        <div class="form-group">
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" placeholder="Enter your first name">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="Enter your email">
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="emailConsent" checked>
+            <label for="emailConsent">
+                I agree to receive occasional updates about mortality research and the Mortals community. I can unsubscribe at any time.
+            </label>
+        </div>
+        
+        <p class="gdpr-text">
+            Your data will be used for research purposes and to send you your results. We take your privacy seriously and will never sell or share your personal information with third parties.
+        </p>
+        
+        <button class="btn" id="sendEmailBtn" onclick="sendEmail()">Send results</button>
+        
+        <div class="success-message" id="successMessage">
+            Results sent successfully! Check your email.
         </div>
     </div>
+</div> <!-- CLOSE THE MODAL HERE -->
+
+<!-- Status Message - OUTSIDE the modal -->
+<div class="status-message" id="statusMessage"></div>
+
+<!-- Brand Footer - OUTSIDE the modal -->
+<div class="brand-footer">
+    <div class="logo">
+        <img src="mortals-logo.png" alt="Mortals Logo">
+    </div>
+</div>
+
+<!-- Progress Bar - Also outside -->
+<div class="progress-container" id="progressContainer">
+    <div class="progress-text" id="progressText">Question 1 of 36</div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+</div>
     
     <script>
         // Debug code - add this FIRST in your script
