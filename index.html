@@ -92,6 +92,7 @@
             scroll-behavior: smooth;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            height: 100%;
         }
         
         body {
@@ -101,25 +102,23 @@
             line-height: 1.6;
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            overflow-x: hidden;
+            /* Removed overflow-x: hidden to allow scrolling */
         }
         
         /* Container */
         .app-container {
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            display: flex;
-            flex-direction: column;
             position: relative;
         }
         
-        /* Screen Layout */
+        /* Screen Layout - Changed from fixed to absolute for better scrolling */
         .screen {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -138,6 +137,7 @@
             visibility: visible;
             transform: translateY(0);
             z-index: 10;
+            position: relative; /* Changed from absolute when active */
         }
         
         .screen.exit {
@@ -490,31 +490,29 @@
             color: var(--gray-medium);
         }
         
-        /* Results */
+        /* Results - Fixed scrolling issues */
         #resultsScreen {
-    padding-top: 20px;
-    padding-bottom: 100px; /* Space for footer */
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
+            padding-top: 60px; /* Space for progress bar if shown */
+            padding-bottom: 100px; /* Space for footer */
+        }
 
-.results-container {
-    padding: var(--spacing-xl);
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 78, 137, 0.1);
-    max-width: 700px;
-    margin: 0 auto 40px auto; /* Added bottom margin */
-}
+        .results-container {
+            padding: var(--spacing-xl);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 78, 137, 0.1);
+            max-width: 700px;
+            margin: 0 auto var(--spacing-2xl) auto;
+        }
 
-.results-container.has-image {
-    padding-top: 0;
-    overflow: visible; /* Changed from hidden */
-}
+        .results-container.has-image {
+            padding-top: 0;
+            overflow: hidden; /* Changed from visible to contain image */
+        }
         
         .archetype-image {
-            width: calc(100% + calc(var(--spacing-2xl) * 2));
-            margin: calc(var(--spacing-2xl) * -1) calc(var(--spacing-2xl) * -1) var(--spacing-xl);
+            width: 100%;
+            margin: 0 0 var(--spacing-xl);
             height: 300px;
             object-fit: cover;
             border-radius: 20px 20px 0 0;
@@ -524,6 +522,7 @@
         .archetype-result {
             margin-bottom: var(--spacing-2xl);
             text-align: center;
+            padding: 0 var(--spacing-xl);
         }
         
         .archetype-result h3 {
@@ -546,66 +545,60 @@
         
         /* Score Display */
         .score-row {
-    display: flex;
-    flex-direction: column;
-    padding: var(--spacing-lg) 0;
-    border-bottom: 1px solid var(--gray-light);
-    gap: var(--spacing-sm);
-}
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: var(--spacing-lg) 0;
+            border-bottom: 1px solid var(--gray-light);
+            gap: var(--spacing-md);
+        }
 
-.score-row:last-child {
-    border-bottom: none;
-}
+        .score-row:last-child {
+            border-bottom: none;
+        }
 
-.score-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-sm);
-}
+        .score-content {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
 
-.score-category {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-dark);
-}
+        .score-emoji {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
 
-.score-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    white-space: nowrap;
-}
+        .score-details {
+            flex: 1;
+        }
 
-.score-emoji {
-    font-size: 1.8rem;
-    margin-right: var(--spacing-sm);
-}
+        .score-category {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
 
-.score-content {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-sm);
-}
+        .score-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
 
-.score-details {
-    flex: 1;
-}
+        .score-description {
+            font-size: 0.9rem;
+            color: var(--gray-medium);
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
 
-.score-label {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-dark);
-    margin-bottom: 4px;
-}
-
-.score-description {
-    font-size: 0.9rem;
-    color: var(--gray-medium);
-    line-height: 1.4;
-    /* Ensure text wraps properly */
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
+        .score-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
         
         .score-high { color: var(--success-green); }
         .score-good { color: var(--blue-accent); }
@@ -614,12 +607,12 @@
         
         /* Feedback */
         .feedback-section {
-    margin-top: var(--spacing-xl);
-    padding: var(--spacing-lg);
-    background: #f8f9fa;
-    border-radius: 15px;
-    text-align: center;
-}
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-align: center;
+        }
         
         .feedback-section h3 {
             color: var(--text-dark);
@@ -664,7 +657,7 @@
             border-color: var(--orange-accent);
         }
         
-        /* Modal */
+        /* Modal - Fixed overflow issues */
         .modal {
             position: fixed;
             top: 0;
@@ -680,6 +673,7 @@
             visibility: hidden;
             transition: all 0.3s ease;
             padding: var(--spacing-lg);
+            overflow-y: auto; /* Allow modal background to scroll */
         }
         
         .modal.show {
@@ -694,10 +688,11 @@
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
+            overflow-y: auto; /* Allow content to scroll */
             position: relative;
             transform: scale(0.9);
             transition: transform 0.3s ease;
+            margin: auto; /* Center in scrollable container */
         }
         
         .modal.show .modal-content {
@@ -789,39 +784,14 @@
             }
             
             .score-row {
-        display: grid;
-        grid-template-columns: 120px 50px 1fr 80px;
-        align-items: center;
-        gap: var(--spacing-md);
-        padding: var(--spacing-md) 0;
-    }
-    
-    .score-header {
-        display: contents; /* Spreads children across grid */
-    }
-    
-    .score-content {
-        display: contents;
-    }
-    
-    .score-category {
-        grid-column: 1;
-    }
-    
-    .score-emoji {
-        grid-column: 2;
-        text-align: center;
-        margin: 0;
-    }
-    
-    .score-details {
-        grid-column: 3;
-    }
-    
-    .score-value {
-        grid-column: 4;
-        text-align: right;
-    }
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+            
+            .score-value {
+                text-align: left;
+                margin-top: var(--spacing-sm);
+            }
             
             .likert-scale {
                 flex-direction: column;
@@ -846,11 +816,11 @@
             
             .archetype-image {
                 height: 200px;
-                margin: calc(var(--spacing-lg) * -1) calc(var(--spacing-lg) * -1) var(--spacing-md);
             }
             
             .modal-content {
                 padding: var(--spacing-lg);
+                margin: var(--spacing-md);
             }
             
             .btn-option {
@@ -1546,6 +1516,8 @@
                            screen.setAttribute('aria-hidden', 'true');
                        }
                    });
+                   // Scroll to top when changing screens
+                   window.scrollTo(0, 0);
                } else {
                    console.error('Screen not found:', targetScreen);
                }
@@ -1983,11 +1955,13 @@
                
                scoreRowsHtml += `
                    <div class="score-row" role="listitem">
-                       <div class="score-category">${subscale.name}</div>
-                       <div class="score-emoji" aria-hidden="true">${interpretation.emoji}</div>
-                       <div class="score-status">
-                           <div class="score-label">${interpretation.label}</div>
-                           <div class="score-description">${interpretation.description}</div>
+                       <div class="score-content">
+                           <span class="score-emoji" aria-hidden="true">${interpretation.emoji}</span>
+                           <div class="score-details">
+                               <div class="score-category">${subscale.name}</div>
+                               <div class="score-label">${interpretation.label}</div>
+                               <div class="score-description">${interpretation.description}</div>
+                           </div>
                        </div>
                        <div class="score-value ${interpretation.colorClass}" aria-label="Score: ${score.toFixed(1)} out of 7">
                            ${score.toFixed(1)}/7
@@ -2042,37 +2016,37 @@
        }
        
        async function submitDetailedFeedback() {
-    const feedbackText = document.getElementById('additionalFeedback').value.trim();
-    
-    if (!feedbackText) {
-        showStatus('Please enter some feedback first');
-        return;
-    }
-    
-    try {
-        const detailedFeedbackData = {
-            feedback: feedbackText,
-            sessionId: appState.sessionId,
-            archetype: appState.results?.archetype?.name || 'Unknown',
-            timestamp: new Date().toISOString()
-        };
-        
-        if (window.firebaseDB && window.firebaseInitialized) {
-            const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
-            await window.firebasePush(detailedFeedbackRef, detailedFeedbackData);
-        }
-        
-        // Clear the text box and show confirmation
-        document.getElementById('additionalFeedback').value = '';
-        document.getElementById('additionalFeedback').placeholder = 'Thank you! Your feedback was sent.';
-        
-        showStatus('Thank you for your detailed feedback!', 3000);
-        
-    } catch (error) {
-        console.error('Error saving detailed feedback:', error);
-        showStatus('Thank you for your feedback!');
-    }
-}
+           const feedbackText = document.getElementById('additionalFeedback').value.trim();
+           
+           if (!feedbackText) {
+               showStatus('Please enter some feedback first');
+               return;
+           }
+           
+           try {
+               const detailedFeedbackData = {
+                   feedback: feedbackText,
+                   sessionId: appState.sessionId,
+                   archetype: appState.results?.archetype?.name || 'Unknown',
+                   timestamp: new Date().toISOString()
+               };
+               
+               if (window.firebaseDB && window.firebaseInitialized) {
+                   const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+                   await window.firebasePush(detailedFeedbackRef, detailedFeedbackData);
+               }
+               
+               // Clear the text box and show confirmation
+               document.getElementById('additionalFeedback').value = '';
+               document.getElementById('additionalFeedback').placeholder = 'Thank you! Your feedback was sent.';
+               
+               showStatus('Thank you for your detailed feedback!', 3000);
+               
+           } catch (error) {
+               console.error('Error saving detailed feedback:', error);
+               showStatus('Thank you for your feedback!');
+           }
+       }
        
        // Email Functions
        function showEmailModal() {
