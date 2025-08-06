@@ -241,9 +241,10 @@
 .landing-image {
     width: 200px;
     height: 200px;
-    margin-bottom: 1.5rem;
+    margin: 0 auto 1.5rem auto;  /* Centers the image */
+    display: block;  /* Makes margin auto work */
     object-fit: contain;
-}       
+}     
 
         #landingScreen {
     position: absolute;
@@ -411,22 +412,36 @@
         line-height: 1.3;
         margin-bottom: 1rem;
     }
+
+            #intro1Screen .content,
+#intro2Screen .content,
+#intro3Screen .content {
+    padding: 20px;
+    max-height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 }
         
         /* Button Styles */
         .btn {
-            background: var(--orange-accent);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Solway', serif;
-            margin: 10px;
-        }
+    background: var(--orange-accent);
+    color: white;
+    border: none;
+    padding: 18px 40px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Solway', serif;
+    margin: 10px;
+    position: relative;  /* Add this */
+    z-index: 50;  /* Add this */
+}
         
         .btn:hover {
             background: #ff5722;
@@ -858,6 +873,29 @@
             h3 {
                 font-size: 1.2rem;
             }
+
+                #intro1Screen h2,
+    #intro2Screen h2,
+    #intro3Screen h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+                #intro1Screen p,
+    #intro2Screen p,
+    #intro3Screen p,
+    #intro1Screen li,
+    #intro2Screen li,
+    #intro3Screen li {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+                #intro1Screen .content,
+    #intro2Screen .content,
+    #intro3Screen .content {
+        padding-bottom: 100px;
+    }
+}
             
             .question-text {
                 font-size: 1.2rem;
@@ -883,12 +921,17 @@
             }
             
             .brand-footer {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 100;
-    }
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;  /* Change this to 10 instead of 100 */
+    pointer-events: none;  /* Add this line - makes it non-clickable */
+}
+
+            .brand-footer .logo {
+    pointer-events: auto;  /* Add this - makes just the logo clickable if needed */
+}
 
             .btn {
         margin-bottom: 20px;
