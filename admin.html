@@ -246,6 +246,64 @@
             color: var(--orange-accent);
             font-size: 1.2rem;
         }
+
+        /* Add to your existing CSS */
+.feedback-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 1rem;
+}
+
+.feedback-item {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.feedback-type {
+    font-weight: 600;
+    color: var(--text-dark);
+    text-transform: capitalize;
+}
+
+.feedback-count {
+    font-weight: 700;
+    color: var(--orange-accent);
+    font-size: 1.1rem;
+}
+
+.detailed-feedback-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--orange-accent);
+}
+
+.feedback-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--gray-medium);
+}
+
+.feedback-text {
+    font-style: italic;
+    color: var(--text-dark);
+    line-height: 1.4;
+}
+
+.feedback-archetype {
+    background: var(--primary-orange);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
         
         @media (max-width: 768px) {
             .stats-grid {
@@ -312,6 +370,21 @@
                     <div class="loading">Loading type data...</div>
                 </div>
             </div>
+
+            <div class="section">
+    <h2>User Feedback Summary</h2>
+    <div class="feedback-stats" id="feedbackStats">
+        <div class="loading">Loading feedback data...</div>
+    </div>
+</div>
+
+<!-- Detailed Feedback Section -->
+<div class="section">
+    <h2>Recent Detailed Feedback</h2>
+    <div id="detailedFeedbackContainer">
+        <div class="loading">Loading detailed feedback...</div>
+    </div>
+</div>
 
             <!-- Death Experience Summary -->
             <div class="section">
@@ -382,6 +455,8 @@
         // Global variables
         let allResponses = [];
         let emailData = {};
+        let feedbackData = []; // ADD THIS
+let detailedFeedbackData = []; // ADD THIS
         
         async function logout() {
             try {
@@ -434,47 +509,130 @@
             });
         });
         
-        async function loadDashboard() {
-            if (!window.firebaseDB) {
-                alert('Firebase not initialized. Please check your configuration.');
-                return;
-            }
+       async function loadDashboard() {
+    if (!window.firebaseDB) {
+        alert('Firebase not initialized. Please check your configuration.');
+        return;
+    }
+    
+    try {
+        // Load responses
+        const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
+        const responsesSnapshot = await window.firebaseGet(responsesRef);
+        
+        if (responsesSnapshot.exists()) {
+            const responsesData = responsesSnapshot.val();
+            allResponses = Object.entries(responsesData).map(([key, value]) => ({
+                id: key,
+                ...value
+            }));
             
-            try {
-                // Load responses
-                const responsesRef = window.firebaseRef(window.firebaseDB, 'responses');
-                const responsesSnapshot = await window.firebaseGet(responsesRef);
-                
-                if (responsesSnapshot.exists()) {
-                    const responsesData = responsesSnapshot.val();
-                    allResponses = Object.entries(responsesData).map(([key, value]) => ({
-                        id: key,
-                        ...value
-                    }));
-                    
-                    // Sort by timestamp (newest first)
-                    allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                }
-                
-                // Load email data
-                const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
-                const emailSnapshot = await window.firebaseGet(emailRef);
-                
-                if (emailSnapshot.exists()) {
-                    emailData = emailSnapshot.val();
-                }
-                
-                // Update UI
-                updateStatistics();
-                updateDeathExperienceStats();
-                updateArchetypeBreakdown();
-                updateResponsesTable();
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                alert('Error loading data. Please check the console.');
-            }
+            // Sort by timestamp (newest first)
+            allResponses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
+        
+        // Load email data
+        const emailRef = window.firebaseRef(window.firebaseDB, 'email_data');
+        const emailSnapshot = await window.firebaseGet(emailRef);
+        
+        if (emailSnapshot.exists()) {
+            emailData = emailSnapshot.val();
+        }
+        
+        // ADD THIS: Load feedback data
+        const feedbackRef = window.firebaseRef(window.firebaseDB, 'feedback');
+        const feedbackSnapshot = await window.firebaseGet(feedbackRef);
+        
+        if (feedbackSnapshot.exists()) {
+            feedbackData = Object.values(feedbackSnapshot.val());
+        } else {
+            feedbackData = [];
+        }
+        
+        // Load detailed feedback data
+        const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+        const detailedFeedbackSnapshot = await window.firebaseGet(detailedFeedbackRef);
+        
+        if (detailedFeedbackSnapshot.exists()) {
+            detailedFeedbackData = Object.values(detailedFeedbackSnapshot.val());
+        } else {
+            detailedFeedbackData = [];
+        }
+
+function updateFeedbackSummary() {
+    // Update feedback stats
+    const feedbackStatsEl = document.getElementById('feedbackStats');
+    
+    if (feedbackData.length === 0) {
+        feedbackStatsEl.innerHTML = '<p>No feedback yet</p>';
+    } else {
+        // Count feedback types
+        const feedbackCounts = {};
+        feedbackData.forEach(item => {
+            feedbackCounts[item.feedbackType] = (feedbackCounts[item.feedbackType] || 0) + 1;
+        });
+        
+        // Create feedback summary HTML
+        const feedbackHtml = Object.entries(feedbackCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([type, count]) => {
+                const percentage = Math.round((count / feedbackData.length) * 100);
+                return `
+                    <div class="feedback-item">
+                        <span class="feedback-type">${type.replace('-', ' ')}</span>
+                        <span class="feedback-count">${count} (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
+        
+        feedbackStatsEl.innerHTML = `
+            <div class="feedback-summary">
+                <p><strong>Total Feedback Responses: ${feedbackData.length}</strong></p>
+                ${feedbackHtml}
+            </div>
+        `;
+    }
+    
+    // Update detailed feedback
+    const detailedContainer = document.getElementById('detailedFeedbackContainer');
+    
+    if (detailedFeedbackData.length === 0) {
+        detailedContainer.innerHTML = '<p>No detailed feedback yet</p>';
+    } else {
+        // Show recent detailed feedback
+        const recentFeedback = detailedFeedbackData
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 10); // Show last 10
+        
+        const detailedHtml = recentFeedback.map(item => {
+            const date = new Date(item.timestamp).toLocaleDateString();
+            return `
+                <div class="detailed-feedback-item">
+                    <div class="feedback-meta">
+                        <span class="feedback-date">${date}</span>
+                        <span class="feedback-archetype">${item.archetype || 'Unknown'}</span>
+                    </div>
+                    <div class="feedback-text">"${item.feedback}"</div>
+                </div>
+            `;
+        }).join('');
+        
+        detailedContainer.innerHTML = detailedHtml;
+    }
+}
+        
+        // Update UI
+        updateStatistics();
+        updateDeathExperienceStats();
+        updateArchetypeBreakdown();
+        updateResponsesTable();
+        updateFeedbackSummary(); // ADD THIS LINE
+        
+    } catch (error) {
+        console.error('Error loading data:', error);
+        alert('Error loading data. Please check the console.');
+    }
+}
         
         function updateStatistics() {
             // Total responses
