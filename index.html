@@ -828,18 +828,19 @@
         z-index: 100;
     }
 
-    .brand-footer {
-        bottom: 10px;
-        z-index: 1; /* Lower than buttons */
-    }
-    
     /* Ensure button is clickable */
     #landingScreen .btn {
         position: relative;
-        z-index: 100;
-        pointer-events: auto;
+        z-index: 1000 !important;
+        pointer-events: auto !important;
     }
-}
+
+    .brand-footer {
+        bottom: 10px;
+        z-index: 1;
+        pointer-events: none;
+    }
+    
     .logo {
         width: 40px;
         height: 40px;
@@ -856,7 +857,8 @@
     }
     
     .results-container {
-        padding: 1.5rem;
+        max-height: none;
+        overflow-y: visible;
     }
 }
     
@@ -1483,17 +1485,29 @@
         
         // Screen Navigation
         function showScreen(screenName) {
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(screen => {
-                screen.classList.remove('active', 'exit');
-            });
-            
-            setTimeout(() => {
-                document.getElementById(screenName + 'Screen').classList.add('active');
-            }, 100);
-            
-            appState.currentScreen = screenName;
+    // Handle both formats (with and without 'Screen' suffix)
+    let targetScreen = screenName;
+    if (!screenName.endsWith('Screen')) {
+        targetScreen = screenName + 'Screen';
+    }
+    
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => {
+        screen.classList.remove('active', 'exit');
+    });
+    
+    setTimeout(() => {
+        const targetElement = document.getElementById(targetScreen);
+        if (targetElement) {
+            targetElement.classList.add('active');
+        } else {
+            console.error('Screen not found:', targetScreen);
         }
+    }, 100);
+    
+    // Update state to track current screen (without 'Screen' suffix for consistency)
+    appState.currentScreen = screenName.replace('Screen', '');
+}
         
         // Start Assessment
         function startAssessment() {
@@ -1514,7 +1528,7 @@
                 results: null,
                 sessionId: generateSessionId()
             };
-            showScreen('intro1');
+            showScreen('intro1Screen');
         }
         
         // Check Demographics
