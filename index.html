@@ -293,14 +293,18 @@
     }
     
     /* Brand Footer */
-    .brand-footer {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 10;
-        pointer-events: none;
-    }
+.brand-footer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* Make footer unclickable on landing screen only */
+#landingScreen .brand-footer {
+    pointer-events: none;
+}
     
     .logo {
         width: 50px;
@@ -825,15 +829,11 @@
         position: relative;
         z-index: 100;
     }
-    
-    /* Footer at bottom */
+
     .brand-footer {
-        position: fixed;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1;
-    }
+    bottom: 10px;
+    /* Remove any pointer-events or z-index here */
+}
     
     .logo {
         width: 40px;
@@ -888,11 +888,6 @@
 /* Ensure no overlay blocks the button */
 #landingScreen * {
     pointer-events: auto;
-}
-
-#landingScreen .brand-footer,
-#landingScreen .brand-footer * {
-    pointer-events: none !important;
 }
         
 </style>
