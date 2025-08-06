@@ -757,8 +757,6 @@
         opacity: 1;
     }
     
-    /* MOBILE STYLES - ALL IN ONE PLACE */
-    @media (max-width: 768px) {
 /* MOBILE STYLES - SIMPLIFIED AND FIXED */
 @media (max-width: 768px) {
     /* Base mobile setup */
@@ -831,10 +829,17 @@
     }
 
     .brand-footer {
-    bottom: 10px;
-    /* Remove any pointer-events or z-index here */
-}
+        bottom: 10px;
+        z-index: 1; /* Lower than buttons */
+    }
     
+    /* Ensure button is clickable */
+    #landingScreen .btn {
+        position: relative;
+        z-index: 100;
+        pointer-events: auto;
+    }
+}
     .logo {
         width: 40px;
         height: 40px;
@@ -898,8 +903,8 @@
     <div class="content">
         <img src="map-landing.png" alt="MAP" class="landing-image">
         <h1>Discover what really drives you</h1>
-<p>Death is the one experience we all share, yet each of us relates to it differently...</p>
-        <button class="btn" onclick="startAssessment()" ontouchend="startAssessment(); event.preventDefault();">Who are you?</button>
+        <p>Death is the one experience we all share, yet each of us relates to it differently...</p>
+        <button class="btn" id="startBtn">Who are you?</button>
     </div>
 </div>
 
@@ -1250,33 +1255,6 @@
 </div>
     
     <script>
-// Make function available immediately
-function startAssessment() {
-    console.log('Starting assessment...');
-    
-    // Just hide landing and show intro1 directly
-    document.getElementById('landingScreen').classList.remove('active');
-    document.getElementById('intro1Screen').classList.add('active');
-    
-    // Set up the app state
-    appState = {
-        currentScreen: 'intro1',
-        currentQuestion: 0,
-        responses: [],
-        demographics: {},
-        deathExperiences: {
-            illness: null,
-            closeIllness: null,
-            closeIllnessLevel: null,
-            closeDying: null,
-            closeDyingLevel: null,
-            seenDie: null
-        },
-        selectedOption: null,
-        results: null,
-        sessionId: 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-    };
-}
         // MMAMM Core Logic (unchanged from original)
         const MMAMM = {
             questions: [
@@ -2378,6 +2356,7 @@ function submitDetailedFeedback() {
         showStatus('Feedback saved locally');
     }
 }
+        
     </script>
 </body>
 </html>
