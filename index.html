@@ -255,24 +255,20 @@
     background: white;
     color: var(--text-dark);
     border: 2px solid var(--gray-light);
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    padding: 10px 20px;
     border-radius: 25px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Solway', serif;
 }
 
-.feedback-btn:hover {
+.feedback-btn:hover:not(:disabled) {
     border-color: var(--orange-accent);
-    background: var(--orange-accent);
-    color: white;
     transform: translateY(-2px);
 }
 
-.feedback-btn:active {
-    transform: translateY(0);
+.feedback-btn:disabled {
+    cursor: not-allowed;
 }
 
 #additionalFeedback {
@@ -1866,6 +1862,101 @@
                 return `Your score is significantly lower than average, indicating this plays a minimal role in how you relate to mortality.`;
             }
         }
+
+// Track if feedback has been submitted
+    let feedbackSubmitted = false;
+    
+    // Function to save simple feedback
+    async function submitFeedback(feedbackType) {
+        try {
+            if (!window.firebaseDB) {
+                console.error('Firebase not initialized');
+                return;
+            }
+            
+            // Prevent multiple submissions
+            if (feedbackSubmitted) {
+                showStatus('Thank you! You\'ve already submitted feedback.');
+                return;
+            }
+            
+            const feedbackData = {
+                feedbackType: feedbackType,
+                sessionId: appState.sessionId,
+                archetype: appState.results?.archetype?.name || 'Unknown',
+                timestamp: new Date().toISOString()
+            };
+            
+            const feedbackRef = window.firebaseRef(window.firebaseDB, 'feedback');
+            await window.firebasePush(feedbackRef, feedbackData);
+            
+            console.log('Feedback saved:', feedbackType);
+            
+            // Mark as submitted
+            feedbackSubmitted = true;
+            
+            // Visual feedback
+            showStatus('Thank you for your feedback!');
+            
+            // Highlight the selected button
+            document.querySelectorAll('.feedback-btn').forEach(btn => {
+                btn.style.opacity = '0.5';
+                btn.disabled = true;
+            });
+            event.target.style.opacity = '1';
+            event.target.style.background = 'var(--orange-accent)';
+            event.target.style.color = 'white';
+            
+        } catch (error) {
+            console.error('Error saving feedback:', error);
+            showStatus('Unable to save feedback, but thank you!');
+        }
+    }
+    
+    // Function to save detailed feedback
+    async function submitDetailedFeedback() {
+        try {
+            const feedbackText = document.getElementById('additionalFeedback').value.trim();
+            
+            if (!feedbackText) {
+                showStatus('Please enter some feedback first');
+                return;
+            }
+            
+            if (!window.firebaseDB) {
+                console.error('Firebase not initialized');
+                showStatus('Unable to save feedback, but thank you!');
+                return;
+            }
+            
+            const detailedFeedbackData = {
+                feedback: feedbackText,
+                sessionId: appState.sessionId,
+                archetype: appState.results?.archetype?.name || 'Unknown',
+                timestamp: new Date().toISOString()
+            };
+            
+            const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+            await window.firebasePush(detailedFeedbackRef, detailedFeedbackData);
+            
+            console.log('Detailed feedback saved');
+            
+            // Clear the textarea and show success
+            document.getElementById('additionalFeedback').value = '';
+            document.getElementById('additionalFeedback').placeholder = 'Thank you for your feedback!';
+            document.getElementById('additionalFeedback').disabled = true;
+            
+            // Disable the send button
+            event.target.disabled = true;
+            event.target.textContent = 'Feedback Sent!';
+            
+            showStatus('Thank you for your detailed feedback!');
+            
+        } catch (error) {
+            console.error('Error saving detailed feedback:', error);
+            showStatus('Unable to save feedback, but thank you!');
+        }
+    }
         
         // Updated Send Email function with emoji-based interpretations
 async function sendEmail() {
