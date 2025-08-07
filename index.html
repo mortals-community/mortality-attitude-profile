@@ -1578,7 +1578,16 @@
            };
            showScreen('intro1Screen');
        }
-       
+       // Make it callable from the page
+window.startAssessment = startAssessment;
+
+// Also wire it programmatically (belt & braces)
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('startBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    startAssessment();
+  });
+});
        // Demographics Functions
        function checkDemographics() {
            const age = document.getElementById('ageRange').value;
