@@ -1745,40 +1745,40 @@ document.addEventListener('DOMContentLoaded', () => {
                progressContainer.setAttribute('aria-valuenow', Math.round(progress));
            }
            
-           document.querySelectorAll('.likert-option').forEach(opt => {
-               opt.classList.remove('selected');
-           });
-           
-           if (appState.responses[appState.currentQuestion]) {
-               const prevValue = appState.responses[appState.currentQuestion];
-               const prevOption = document.querySelector(`[data-value="${prevValue}"]`);
-               if (prevOption) {
-                   prevOption.classList.add('selected');
-                   appState.selectedOption = prevValue;
-               }
-           } else {
-               appState.selectedOption = null;
-           }
+           const optionsWrap = document.getElementById('likertOptions');
+if (optionsWrap) {
+  optionsWrap.querySelectorAll('.likert-option')
+    .forEach(btn => btn.classList.remove('selected'));
+}
+appState.selectedOption = null;
+
+// Belt-and-braces: drop focus so no button looks “active”
+if (document.activeElement && document.activeElement.classList.contains('likert-option')) {
+  document.activeElement.blur();
+}
        }
        
-       // Select Option
        function selectOption(value) {
-           document.querySelectorAll('.likert-option').forEach(opt => {
-               opt.classList.remove('selected');
-           });
-           
-           const selectedOption = document.querySelector(`[data-value="${value}"]`);
-           if (selectedOption) {
-               selectedOption.classList.add('selected');
-           }
-           
-           appState.selectedOption = value;
-           appState.responses[appState.currentQuestion] = value;
-           
-           setTimeout(() => {
-               nextQuestion();
-           }, 300);
-       }
+  const optionsWrap = document.getElementById('likertOptions');
+
+  // Clear only the visible question's options
+  if (optionsWrap) {
+    optionsWrap.querySelectorAll('.likert-option')
+      .forEach(btn => btn.classList.remove('selected'));
+  }
+
+  // Mark the clicked one
+  const selected = optionsWrap?.querySelector(`[data-value="${value}"]`);
+  if (selected) selected.classList.add('selected');
+
+  // Record and move on
+  appState.selectedOption = value;
+  appState.responses[appState.currentQuestion] = value;
+
+  setTimeout(() => {
+    nextQuestion();
+  }, 300);
+}
        
        // Next Question
        function nextQuestion() {
