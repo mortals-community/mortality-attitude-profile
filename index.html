@@ -404,6 +404,7 @@
             text-align: center;
         }
         
+                /* Likert Scale */
         /* Likert Scale */
         .likert-container {
             max-width: 700px;
@@ -416,7 +417,7 @@
             justify-content: center;
             gap: var(--spacing-sm);
             margin-bottom: var(--spacing-2xl);
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* Changed from wrap to nowrap */
         }
         
         .likert-label {
@@ -425,12 +426,14 @@
             font-weight: 400;
             text-align: center;
             flex: 0 0 auto;
+            white-space: nowrap; /* Prevent text wrapping */
         }
         
         .likert-options {
             display: flex;
             gap: clamp(8px, 2vw, 15px);
             padding: 0 var(--spacing-sm);
+            flex-shrink: 1; /* Allow shrinking if needed */
         }
         
         .likert-option {
@@ -447,23 +450,6 @@
             font-weight: 500;
             font-size: clamp(0.85rem, 2vw, 1rem);
             touch-action: manipulation;
-        }
-        
-        .likert-option:hover:not(:disabled) {
-            border-color: var(--orange-accent);
-            transform: scale(1.1);
-        }
-        
-        .likert-option:focus-visible {
-            outline: 3px solid var(--orange-accent);
-            outline-offset: 2px;
-        }
-        
-        .likert-option.selected {
-            background: var(--orange-accent);
-            border-color: var(--orange-accent);
-            color: white;
-            transform: scale(1.05);
         }
         
         /* Checkbox */
