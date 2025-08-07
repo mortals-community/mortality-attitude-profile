@@ -347,11 +347,13 @@
             visibility: hidden;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            pointer-events: none;
         }
         
         .progress-container.show {
             opacity: 1;
             visibility: visible;
+            pointer-events: auto;
         }
         
         .progress-text {
@@ -2052,11 +2054,6 @@ if (imagePath && archetypeImage) {
                    buttonElement.classList.add('selected');
                    buttonElement.style.opacity = '1';
                }
-               
-           } catch (error) {
-               console.error('Error saving feedback:', error);
-               showStatus('Thank you for your feedback!');
-           }
        }
        
        async function submitDetailedFeedback() {
