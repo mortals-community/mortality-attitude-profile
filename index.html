@@ -406,16 +406,63 @@
             text-align: center;
         }
         
-                /* Likert Scale */
         /* Likert Scale */
         .likert-container{width:100%;}
 
+.likert-options .likert-option{
+  inline-size: clamp(32px, 7.5vw, 48px);
+  block-size: clamp(32px, 7.5vw, 48px);
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--gray-light);
+  box-shadow: 0 1px 0 rgba(0,0,0,.15);
+  color: var(--text-dark);
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background-color .15s ease, color .15s ease;
+  padding: 0;
+}
+
+.likert-options .likert-option:hover:not(:disabled){
+  border-color: var(--orange-accent);
+  box-shadow: 0 6px 18px rgba(255, 107, 53, .25);
+  transform: translateY(-2px);
+}
+
+.likert-options .likert-option:active:not(:disabled){
+  transform: translateY(0) scale(.98);
+  box-shadow: 0 2px 10px rgba(0,0,0,.12);
+}
+
+/* selected state (after click) */
+.likert-options .likert-option.selected{
+  background: var(--orange-accent);
+  color: #fff;
+  border-color: var(--orange-accent);
+  box-shadow: 0 8px 22px rgba(255, 107, 53, .35);
+}
+
+/* keyboard focus ring (matches your global focus-visible) */
+.likert-options .likert-option:focus-visible{
+  outline: 3px solid var(--orange-accent);
+  outline-offset: 2px;
+}
+
+/* keep labels + 7 buttons on one line */
 .likert-scale{
   display:grid !important;
-  grid-template-columns: max-content minmax(0,1fr) max-content; /* left label | 7 buttons | right label */
+  grid-template-columns: max-content 1fr max-content;
   align-items:center;
   column-gap: clamp(8px, 2vw, 16px);
-  margin-bottom: var(--spacing-2xl);
+}
+.likert-options{
+  display:grid !important;
+  grid-template-columns: repeat(7, max-content);
+  justify-content:center;
+  justify-items:center;
+  gap: clamp(6px, 2vw, 12px);
+  width:100%;
+  min-width:0;
 }
 
 .likert-label{
@@ -425,19 +472,6 @@
   text-align:center;
 }
 
-.likert-options{
-  display:grid !important;
-  grid-template-columns: repeat(7, minmax(28px, 1fr)); /* squeeze to fit */
-  gap: clamp(4px, 1.5vw, 12px);
-  width:100%;
-  min-width:0;                 /* allow shrinking in grid */
-}
-
-.likert-option{
-  width:100%;
-  aspect-ratio:1 / 1;          /* keep circles while shrinking */
-  border-radius:50%;
-}
         
         /* Checkbox */
         .checkbox-group {
