@@ -1780,15 +1780,13 @@ document.addEventListener('DOMContentLoaded', () => {
        }
        
        // Display Current Question
-       // Enhanced displayQuestion function to fix iOS Safari focus persistence
-function displayQuestion() {
+       function displayQuestion() {
     const question = MMAMM.questions[appState.currentQuestion];
     const questionText = document.getElementById('questionText');
     if (questionText) {
         questionText.textContent = question.text;
     }
 
-    // Update progress
     const progress = ((appState.currentQuestion + 1) / MMAMM.questions.length) * 100;
     const progressText = document.getElementById('progressText');
     const progressFill = document.getElementById('progressFill');
@@ -1804,50 +1802,38 @@ function displayQuestion() {
         progressContainer.setAttribute('aria-valuenow', Math.round(progress));
     }
 
-    // ENHANCED: Clear all visual states more thoroughly
     const optionsWrap = document.getElementById('likertOptions');
     if (optionsWrap) {
         optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
-            // Remove all visual classes
             btn.classList.remove('selected');
-            
-            // Force blur to remove focus (iOS Safari fix)
-            btn.blur();
-            
-            // Clear any inline styles that might persist
-            btn.style.backgroundColor = '';
-            btn.style.color = '';
-            btn.style.borderColor = '';
-            
-            // Reset button state
-            btn.disabled = false;
-            
-            // Force repaint on iOS Safari by briefly disabling pointer events
-            btn.style.pointerEvents = 'none';
-            requestAnimationFrame(() => {
-                btn.style.pointerEvents = '';
-            });
+            // Fix mobile focus issues:
+            btn.blur(); // Remove focus
+            btn.style.pointerEvents = 'none'; // Temporarily disable
+            setTimeout(() => {
+                btn.style.pointerEvents = ''; // Re-enable after a tick
+            }, 0);
         });
-        
-        // Additional iOS Safari fix: Remove focus from the container
-        optionsWrap.blur();
-        
-        // Force layout recalculation
-        optionsWrap.offsetHeight;
     }
-    
-    // Reset application state
     appState.selectedOption = null;
-    
-    // Focus management: Move focus away from buttons to prevent iOS issues
-    if (questionText) {
-        questionText.focus();
-        setTimeout(() => {
-            questionText.blur();
-        }, 100);
-    }
 }
-       
+
+       function selectOption(value) {
+    const optionsWrap = document.getElementById('likertOptions');
+    // Clear only the visible question's options
+    if (optionsWrap) {
+        optionsWrap.querySelectorAll('.likert-option')
+            .forEach(btn => btn.classList.remove('selected'));
+    }
+    // Mark the clicked one - FIXED: Added proper backticks
+    const selected = optionsWrap?.querySelector(`[data-value="${value}"]`);
+    if (selected) selected.classList.add('selected');
+    // Record and move on
+    appState.selectedOption = value;
+    appState.responses[appState.currentQuestion] = value;
+    setTimeout(() => {
+        nextQuestion();
+    }, 300);
+}
        // Next Question
        function nextQuestion() {
            const questionSlide = document.getElementById('questionSlide');
