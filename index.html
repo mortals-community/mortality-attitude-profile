@@ -1781,32 +1781,32 @@ document.addEventListener('DOMContentLoaded', () => {
        
        // Display Current Question
        function displayQuestion() {
-           const question = MMAMM.questions[appState.currentQuestion];
-           const questionText = document.getElementById('questionText');
-           if (questionText) {
-               questionText.textContent = question.text;
-           }
+    const question = MMAMM.questions[appState.currentQuestion];
+    const questionText = document.getElementById('questionText');
+    if (questionText) {
+        questionText.textContent = question.text;
+    }
 
-           const progress = ((appState.currentQuestion + 1) / MMAMM.questions.length) * 100;
-           const progressText = document.getElementById('progressText');
-           const progressFill = document.getElementById('progressFill');
-           const progressContainer = document.getElementById('progressContainer');
+    const progress = ((appState.currentQuestion + 1) / MMAMM.questions.length) * 100;
+    const progressText = document.getElementById('progressText');
+    const progressFill = document.getElementById('progressFill');
+    const progressContainer = document.getElementById('progressContainer');
 
-           if (progressText) {
-               progressText.textContent = `Question ${appState.currentQuestion + 1} of ${MMAMM.questions.length}`;
-           }
-           if (progressFill) {
-               progressFill.style.width = progress + '%';
-           }
-           if (progressContainer) {
-               progressContainer.setAttribute('aria-valuenow', Math.round(progress));
-           }
+    if (progressText) {
+        progressText.textContent = `Question ${appState.currentQuestion + 1} of ${MMAMM.questions.length}`;
+    }
+    if (progressFill) {
+        progressFill.style.width = progress + '%';
+    }
+    if (progressContainer) {
+        progressContainer.setAttribute('aria-valuenow', Math.round(progress));
+    }
 
-           const optionsWrap = document.getElementById('likertOptions');
+    const optionsWrap = document.getElementById('likertOptions');
     if (optionsWrap) {
         optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
             btn.classList.remove('selected');
-            // ADD THESE LINES TO FIX THE MOBILE ISSUE:
+            // Fix mobile focus issues:
             btn.blur(); // Remove focus
             btn.style.pointerEvents = 'none'; // Temporarily disable
             setTimeout(() => {
@@ -1818,21 +1818,21 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
        function selectOption(value) {
-  const optionsWrap = document.getElementById('likertOptions');
-  // Clear only the visible question's options
-  if (optionsWrap) {
-    optionsWrap.querySelectorAll('.likert-option')
-      .forEach(btn => btn.classList.remove('selected'));
-  }
-  // Mark the clicked one
-  const selected = optionsWrap?.querySelector([data-value="${value}"]);
-  if (selected) selected.classList.add('selected');
-  // Record and move on
-  appState.selectedOption = value;
-  appState.responses[appState.currentQuestion] = value;
-  setTimeout(() => {
-    nextQuestion();
-  }, 300);
+    const optionsWrap = document.getElementById('likertOptions');
+    // Clear only the visible question's options
+    if (optionsWrap) {
+        optionsWrap.querySelectorAll('.likert-option')
+            .forEach(btn => btn.classList.remove('selected'));
+    }
+    // Mark the clicked one - FIXED: Added proper backticks
+    const selected = optionsWrap?.querySelector(`[data-value="${value}"]`);
+    if (selected) selected.classList.add('selected');
+    // Record and move on
+    appState.selectedOption = value;
+    appState.responses[appState.currentQuestion] = value;
+    setTimeout(() => {
+        nextQuestion();
+    }, 300);
 }
        
        // Next Question
