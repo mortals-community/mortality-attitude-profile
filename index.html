@@ -1803,18 +1803,19 @@ document.addEventListener('DOMContentLoaded', () => {
            }
            
            const optionsWrap = document.getElementById('likertOptions');
-if (optionsWrap) {
-    optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
-        btn.classList.remove('selected');
-        // Force iOS to release touch state
-        btn.style.pointerEvents = 'none';
-        btn.offsetHeight; // Force reflow
-        btn.style.pointerEvents = '';
-        btn.blur();
-    });
+    if (optionsWrap) {
+        optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
+            btn.classList.remove('selected');
+            // **ADD THESE LINES TO FIX THE MOBILE ISSUE:**
+            btn.blur(); // Remove focus
+            btn.style.pointerEvents = 'none'; // Temporarily disable
+            setTimeout(() => {
+                btn.style.pointerEvents = ''; // Re-enable after a tick
+            }, 0);
+        });
+    }
+    appState.selectedOption = null;
 }
-appState.selectedOption = null;
-       }
        
        function selectOption(value) {
   const optionsWrap = document.getElementById('likertOptions');
