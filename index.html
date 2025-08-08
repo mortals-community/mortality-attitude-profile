@@ -2402,5 +2402,27 @@ if (imagePath && archetypeImage) {
            }
        });
    </script>
+    <script>
+(function () {
+  // 1) Every time the visible question changes, remove any highlighted buttons
+  const questionText = document.getElementById('questionText');
+  if (questionText) {
+    new MutationObserver(() => {
+      // Clear any previously highlighted Likert buttons (across the page)
+      document.querySelectorAll('.likert-option.selected')
+        .forEach(btn => btn.classList.remove('selected'));
+      // Kill lingering iOS focus
+      document.activeElement?.blur?.();
+    }).observe(questionText, { childList: true, subtree: true });
+  }
+
+  // 2) Also blur immediately after a tap (belt-and-braces for iOS)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.likert-option');
+    if (!btn) return;
+    setTimeout(() => { document.activeElement?.blur?.(); }, 0);
+  });
+})();
+</script>
 </body>
 </html>
