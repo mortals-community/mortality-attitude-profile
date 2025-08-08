@@ -411,7 +411,7 @@
         .likert-container{width:100%;}
 
 .likert-options .likert-option{
-  inline-size: clamp(32px, 7.5vw, 48px);
+  inline-size: clamp(36px, 8vw, 48px);;
   block-size: clamp(32px, 7.5vw, 48px);
   border-radius: 50%;
   background: #fff;
@@ -419,6 +419,7 @@
   box-shadow: 0 1px 0 rgba(0,0,0,.15);
   color: var(--text-dark);
   font-weight: 500;
+    font-size: clamp(0.85rem, 2vw, 1rem);
   cursor: pointer;
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background-color .15s ease, color .15s ease;
   padding: 0;
@@ -454,15 +455,16 @@
   display:grid !important;
   grid-template-columns: max-content 1fr max-content;
   align-items:center;
-  column-gap: clamp(8px, 2vw, 16px);
+  column-gap: clamp(12px, 3vw, 20px);
 }
 .likert-options{
   display:grid !important;
-  grid-template-columns: repeat(7, max-content);
+  grid-template-columns: repeat(7, 1fr); 
   justify-content:center;
   justify-items:center;
-  gap: clamp(6px, 2vw, 12px);
+  gap: clamp(8px, 2.5vw, 16px);
   width:100%;
+    padding: 0 clamp(4px, 1vw, 12px);
   min-width:0;
 }
 
@@ -879,11 +881,24 @@
             margin: var(--spacing-md);
             padding: var(--spacing-lg);
         }
-            
+            .likert-scale {
+        column-gap: 8px; /* Tighter on mobile but still readable */
+    }
             .likert-options{
     grid-template-columns: repeat(7, minmax(24px, 1fr));
-    gap: 4px;
+    gap: 6px;
+    padding: 0 2px;
   }
+            .likert-options .likert-option {
+        inline-size: 38px; /* Fixed size on mobile for consistency */
+        block-size: 38px;
+        font-size: 0.9rem;
+    }
+    
+    .likert-label {
+        font-size: 0.7rem;
+        max-width: 50px; /* Constrain label width */
+    }
             
             .results-container {
                 padding: var(--spacing-lg);
@@ -914,11 +929,15 @@
                 width: 120px;
             }
             
-            .likert-option {
-                width: 32px;
-                height: 32px;
-                font-size: 0.8rem;
-            }
+            .likert-options .likert-option {
+        inline-size: 34px;
+        block-size: 34px;
+        font-size: 0.85rem;
+    }
+    
+    .likert-options {
+        gap: 4px;
+    }
         }
         
         /* Accessibility */
