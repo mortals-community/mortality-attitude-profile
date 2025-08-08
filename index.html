@@ -1793,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', () => {
            const progressContainer = document.getElementById('progressContainer');
 
            if (progressText) {
-               progressText.textContent = Question ${appState.currentQuestion + 1} of ${MMAMM.questions.length};
+               progressText.textContent = 'Question ${appState.currentQuestion + 1} of ${MMAMM.questions.length};
            }
            if (progressFill) {
                progressFill.style.width = progress + '%';
