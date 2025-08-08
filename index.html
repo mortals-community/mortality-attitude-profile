@@ -530,13 +530,25 @@
         .archetype-result {
         margin-bottom: var(--spacing-2xl);
         text-align: center;
-        padding: var(--spacing-xl); /* Move padding here */
+        padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-xl);
     }
 
         .scores-section {
-    padding: var(--spacing-xl);
+    padding: 0 var(--spacing-2xl) var(--spacing-xl);
 }
 
+        .feedback-section {
+    margin: 0;
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    background: #f8f9fa;
+    border-radius: 0;
+}
+
+        .button-group {
+    padding: 0 var(--spacing-2xl) var(--spacing-2xl);
+    text-align: center;
+}
+        
 .scores-title {
     text-align: center;
     margin-bottom: var(--spacing-xl);
@@ -828,9 +840,21 @@
                 padding: var(--spacing-md);
             }
 
-            .scores-section {
-    padding: var(--spacing-lg);
-}
+            .archetype-result {
+        padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .scores-section {
+        padding: 0 var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .feedback-section {
+        padding: var(--spacing-lg);
+    }
+    
+    .button-group {
+        padding: 0 var(--spacing-lg) var(--spacing-lg);
+    }
             .score-row {
             flex-direction: column;
             gap: var(--spacing-sm);
