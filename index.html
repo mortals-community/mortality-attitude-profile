@@ -1804,15 +1804,15 @@ document.addEventListener('DOMContentLoaded', () => {
            
            const optionsWrap = document.getElementById('likertOptions');
 if (optionsWrap) {
-  optionsWrap.querySelectorAll('.likert-option')
-    .forEach(btn => btn.classList.remove('selected'));
+  optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
+    btn.classList.remove('selected');
+    // Remove focus from all Likert buttons
+    if (btn === document.activeElement) {
+      btn.blur();
+    }
+  });
 }
 appState.selectedOption = null;
-
-// Belt-and-braces: drop focus so no button looks “active”
-if (document.activeElement && document.activeElement.classList.contains('likert-option')) {
-  document.activeElement.blur();
-}
        }
        
        function selectOption(value) {
