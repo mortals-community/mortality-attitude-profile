@@ -1804,13 +1804,14 @@ document.addEventListener('DOMContentLoaded', () => {
            
            const optionsWrap = document.getElementById('likertOptions');
 if (optionsWrap) {
-  optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
-    btn.classList.remove('selected');
-    // Remove focus from all Likert buttons
-    if (btn === document.activeElement) {
-      btn.blur();
-    }
-  });
+    optionsWrap.querySelectorAll('.likert-option').forEach(btn => {
+        btn.classList.remove('selected');
+        // Force iOS to release touch state
+        btn.style.pointerEvents = 'none';
+        btn.offsetHeight; // Force reflow
+        btn.style.pointerEvents = '';
+        btn.blur();
+    });
 }
 appState.selectedOption = null;
        }
