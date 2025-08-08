@@ -2045,23 +2045,13 @@ if (imagePath && archetypeImage) {
         appState.selectedFeedback.push(feedbackType);
         buttonElement.classList.add('selected');
     }
-               
-               appState.feedbackSubmitted = true;
-               
-               // Visual feedback
-               showStatus('Thank you for your feedback!');
-               
-               // Update button states
-               document.querySelectorAll('.feedback-btn').forEach(btn => {
-                   btn.disabled = true;
-                   btn.style.opacity = '0.5';
-               });
-               
-               if (buttonElement) {
-                   buttonElement.classList.add('selected');
-                   buttonElement.style.opacity = '1';
-               }
-       }
+    
+    // Visual feedback to show selection count
+    const count = appState.selectedFeedback.length;
+    if (count > 0) {
+        console.log(`Selected ${count} feedback option(s)`);
+    }
+}
        
        async function submitDetailedFeedback() {
     const feedbackText = document.getElementById('additionalFeedback').value.trim();
@@ -2085,23 +2075,22 @@ if (imagePath && archetypeImage) {
             const feedbackRef = window.firebaseRef(window.firebaseDB, 'feedback');
             await window.firebasePush(feedbackRef, detailedFeedbackData);
         }
-               
+        
+        // Clear selections after submission
         document.querySelectorAll('.feedback-btn').forEach(btn => {
             btn.classList.remove('selected');
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
         });
         appState.selectedFeedback = [];
         
         document.getElementById('additionalFeedback').value = '';
         document.getElementById('additionalFeedback').placeholder = 'Thank you! Your feedback was sent.';
+        document.getElementById('additionalFeedback').disabled = true;
         
         showStatus('Thank you for your feedback!', 3000);
         
-        // Disable buttons after submission
-        document.querySelectorAll('.feedback-btn').forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-        });
-        
+        // Disable send button after submission
         document.querySelector('.send-feedback-btn').disabled = true;
         
     } catch (error) {
