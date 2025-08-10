@@ -2149,17 +2149,37 @@ if (imagePath && archetypeImage) {
     }
     
     try {
-        const detailedFeedbackData = {
-            selectedOptions: selectedFeedback,
-            additionalFeedback: feedbackText,
-            sessionId: appState.sessionId,
-            archetype: appState.results?.archetype?.name || 'Unknown',
-            timestamp: new Date().toISOString()
-        };
+        // Save individual feedback entries for each selected option (for backward compatibility)
+        if (selectedFeedback.length > 0) {
+            for (const feedbackType of selectedFeedback) {
+                const individualFeedbackData = {
+                    feedbackType: feedbackType,  // This matches what admin expects
+                    sessionId: appState.sessionId,
+                    archetype: appState.results?.archetype?.name || 'Unknown',
+                    timestamp: new Date().toISOString()
+                };
+                
+                if (window.firebaseDB && window.firebaseInitialized) {
+                    const feedbackRef = window.firebaseRef(window.firebaseDB, 'feedback');
+                    await window.firebasePush(feedbackRef, individualFeedbackData);
+                }
+            }
+        }
         
-        if (window.firebaseDB && window.firebaseInitialized) {
-            const feedbackRef = window.firebaseRef(window.firebaseDB, 'feedback');
-            await window.firebasePush(feedbackRef, detailedFeedbackData);
+        // Save detailed feedback with text (if provided)
+        if (feedbackText) {
+            const detailedFeedbackData = {
+                selectedOptions: selectedFeedback,
+                additionalFeedback: feedbackText,
+                sessionId: appState.sessionId,
+                archetype: appState.results?.archetype?.name || 'Unknown',
+                timestamp: new Date().toISOString()
+            };
+            
+            if (window.firebaseDB && window.firebaseInitialized) {
+                const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+                await window.firebasePush(detailedFeedbackRef, detailedFeedbackData);
+            }
         }
         
         // Clear selections after submission
