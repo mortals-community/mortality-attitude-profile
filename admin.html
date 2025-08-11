@@ -464,6 +464,34 @@
     </div>
     
     <script>
+// Simple login function that will be available immediately
+async function login() {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    const errorEl = document.getElementById('authError');
+    
+    if (!email || !password) {
+        errorEl.textContent = 'Please enter both email and password.';
+        return;
+    }
+    
+    try {
+        // Wait for Firebase to be ready
+        if (!window.firebaseSignIn) {
+            errorEl.textContent = 'System loading, please wait...';
+            return;
+        }
+        
+        const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
+        console.log('Logged in successfully:', userCredential.user.email);
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        errorEl.textContent = 'Invalid email or password.';
+        document.getElementById('passwordInput').value = '';
+    }
+}
+</script>
         // Global variables
         let allResponses = [];
         let emailData = {};
