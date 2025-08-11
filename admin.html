@@ -508,6 +508,7 @@
         document.getElementById('passwordInput').value = '';
     }
 }
+        window.login = login;
 
         // Add auth state observer
         window.addEventListener('load', () => {
@@ -1129,6 +1130,12 @@ function closeFeedbackModal() {
                 }
             }, 2000);
         });
+        window.logout = logout;
+window.exportAllData = exportAllData;
+window.exportEmailList = exportEmailList;
+window.exportSummaryStats = exportSummaryStats;
+window.showDetailedFeedbackTable = showDetailedFeedbackTable;
+window.closeFeedbackModal = closeFeedbackModal;
     </script>
 </body>
 </html>
