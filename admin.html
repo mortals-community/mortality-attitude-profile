@@ -464,33 +464,6 @@
     </div>
     
     <script>
-// Simple login function that will be available immediately
-async function login() {
-    const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passwordInput').value;
-    const errorEl = document.getElementById('authError');
-    
-    if (!email || !password) {
-        errorEl.textContent = 'Please enter both email and password.';
-        return;
-    }
-    
-    try {
-        // Wait for Firebase to be ready
-        if (!window.firebaseSignIn) {
-            errorEl.textContent = 'System loading, please wait...';
-            return;
-        }
-        
-        const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
-        console.log('Logged in successfully:', userCredential.user.email);
-        
-    } catch (error) {
-        console.error('Login error:', error);
-        errorEl.textContent = 'Invalid email or password.';
-        document.getElementById('passwordInput').value = '';
-    }
-}
         // Global variables
         let allResponses = [];
         let emailData = {};
@@ -507,28 +480,34 @@ async function login() {
         }
         
         async function login() {
-            const email = document.getElementById('emailInput').value;
-            const password = document.getElementById('passwordInput').value;
-            const errorEl = document.getElementById('authError');
-            
-            if (!email || !password) {
-                errorEl.textContent = 'Please enter both email and password.';
-                return;
-            }
-            
-            try {
-                // Sign in with Firebase Auth
-                const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
-                console.log('Logged in successfully:', userCredential.user.email);
-                
-                // Auth state observer will handle showing the dashboard
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                errorEl.textContent = 'Invalid email or password.';
-                document.getElementById('passwordInput').value = '';
-            }
-        }
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    const errorEl = document.getElementById('authError');
+    
+    if (!email || !password) {
+        errorEl.textContent = 'Please enter both email and password.';
+        return;
+    }
+    
+    // Check if Firebase is ready
+    if (!window.firebaseSignIn || !window.firebaseAuth) {
+        errorEl.textContent = 'System is still loading. Please wait a moment and try again.';
+        return;
+    }
+    
+    try {
+        // Sign in with Firebase Auth
+        const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
+        console.log('Logged in successfully:', userCredential.user.email);
+        
+        // Auth state observer will handle showing the dashboard
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        errorEl.textContent = 'Invalid email or password.';
+        document.getElementById('passwordInput').value = '';
+    }
+}
 
         // Add auth state observer
         window.addEventListener('load', () => {
