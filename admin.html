@@ -372,31 +372,31 @@
 
             <!-- Feedback Summary -->
             <div class="section">
-    <h2>User Feedback Summary</h2>
-    <div class="feedback-stats" id="feedbackStats">
-        <div class="loading">Loading feedback data...</div>
-    </div>
-    
-    <!-- Quick Feedback Buttons Summary -->
-    <div style="margin-top: 30px;">
-        <h3>Quick Feedback Selections</h3>
-        <div id="quickFeedbackSummary">
-            <div class="loading">Loading quick feedback...</div>
-        </div>
-    </div>
-    
-    <!-- Additional Written Feedback -->
-    <div style="margin-top: 30px;">
-        <h3>Recent Written Feedback</h3>
-        <div id="writtenFeedbackContainer">
-            <div class="loading">Loading written feedback...</div>
-        </div>
-    </div>
-    
-    <div style="margin-top: 20px; text-align: center;">
-        <button class="btn" onclick="showDetailedFeedbackTable()">View Complete Feedback Table</button>
-    </div>
-</div>
+                <h2>User Feedback Summary</h2>
+                <div class="feedback-stats" id="feedbackStats">
+                    <div class="loading">Loading feedback data...</div>
+                </div>
+                
+                <!-- Quick Feedback Buttons Summary -->
+                <div style="margin-top: 30px;">
+                    <h3>Quick Feedback Selections</h3>
+                    <div id="quickFeedbackSummary">
+                        <div class="loading">Loading quick feedback...</div>
+                    </div>
+                </div>
+                
+                <!-- Additional Written Feedback -->
+                <div style="margin-top: 30px;">
+                    <h3>Recent Written Feedback</h3>
+                    <div id="writtenFeedbackContainer">
+                        <div class="loading">Loading written feedback...</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn" onclick="showDetailedFeedbackTable()">View Complete Feedback Table</button>
+                </div>
+            </div>
             
             <!-- Death Experience Summary -->
             <div class="section">
@@ -480,34 +480,35 @@
         }
         
         async function login() {
-    const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passwordInput').value;
-    const errorEl = document.getElementById('authError');
-    
-    if (!email || !password) {
-        errorEl.textContent = 'Please enter both email and password.';
-        return;
-    }
-    
-    // Check if Firebase is ready
-    if (!window.firebaseSignIn || !window.firebaseAuth) {
-        errorEl.textContent = 'System is still loading. Please wait a moment and try again.';
-        return;
-    }
-    
-    try {
-        // Sign in with Firebase Auth
-        const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
-        console.log('Logged in successfully:', userCredential.user.email);
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('authError');
+            
+            if (!email || !password) {
+                errorEl.textContent = 'Please enter both email and password.';
+                return;
+            }
+            
+            // Check if Firebase is ready
+            if (!window.firebaseSignIn || !window.firebaseAuth) {
+                errorEl.textContent = 'System is still loading. Please wait a moment and try again.';
+                return;
+            }
+            
+            try {
+                // Sign in with Firebase Auth
+                const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, password);
+                console.log('Logged in successfully:', userCredential.user.email);
+                
+                // Auth state observer will handle showing the dashboard
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                errorEl.textContent = 'Invalid email or password.';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
         
-        // Auth state observer will handle showing the dashboard
-        
-    } catch (error) {
-        console.error('Login error:', error);
-        errorEl.textContent = 'Invalid email or password.';
-        document.getElementById('passwordInput').value = '';
-    }
-}
         window.login = login;
 
         // Add auth state observer
@@ -558,17 +559,17 @@
                     emailData = emailSnapshot.val();
                 }
                 
-                // Load detailed feedback data (this contains both selected options AND written feedback)
-const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
-const detailedFeedbackSnapshot = await window.firebaseGet(detailedFeedbackRef);
+                // Load detailed feedback data
+                const detailedFeedbackRef = window.firebaseRef(window.firebaseDB, 'detailed_feedback');
+                const detailedFeedbackSnapshot = await window.firebaseGet(detailedFeedbackRef);
 
-if (detailedFeedbackSnapshot.exists()) {
-    feedbackData = Object.values(detailedFeedbackSnapshot.val());
-    detailedFeedbackData = feedbackData; // Same data for both
-} else {
-    feedbackData = [];
-    detailedFeedbackData = [];
-}
+                if (detailedFeedbackSnapshot.exists()) {
+                    feedbackData = Object.values(detailedFeedbackSnapshot.val());
+                    detailedFeedbackData = feedbackData;
+                } else {
+                    feedbackData = [];
+                    detailedFeedbackData = [];
+                }
                 
                 // Update UI
                 updateStatistics();
@@ -584,313 +585,243 @@ if (detailedFeedbackSnapshot.exists()) {
         }
 
         function updateFeedbackSummary() {
-    // 1. QUICK FEEDBACK SELECTIONS SUMMARY
-    const quickFeedbackEl = document.getElementById('quickFeedbackSummary');
-    
-    if (feedbackData.length === 0) {
-        quickFeedbackEl.innerHTML = '<p>No quick feedback yet</p>';
-    } else {
-        // Count individual feedback options from selectedOptions arrays
-        const feedbackCounts = {};
-        let responsesWithSelections = 0;
-        
-        feedbackData.forEach(item => {
-            if (item.selectedOptions && Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0) {
-                responsesWithSelections++;
-                item.selectedOptions.forEach(option => {
-                    feedbackCounts[option] = (feedbackCounts[option] || 0) + 1;
+            // 1. QUICK FEEDBACK SELECTIONS SUMMARY
+            const quickFeedbackEl = document.getElementById('quickFeedbackSummary');
+            
+            if (feedbackData.length === 0) {
+                quickFeedbackEl.innerHTML = '<p>No quick feedback yet</p>';
+            } else {
+                // Count individual feedback options from selectedOptions arrays
+                const feedbackCounts = {};
+                let responsesWithSelections = 0;
+                
+                feedbackData.forEach(item => {
+                    if (item.selectedOptions && Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0) {
+                        responsesWithSelections++;
+                        item.selectedOptions.forEach(option => {
+                            feedbackCounts[option] = (feedbackCounts[option] || 0) + 1;
+                        });
+                    }
                 });
-            }
-        });
-        
-        const totalFeedbackOptions = Object.values(feedbackCounts).reduce((sum, count) => sum + count, 0);
-        
-        // Map feedback codes to readable labels
-        const feedbackLabels = {
-            'easy': 'Easy to use',
-            'confusing': 'Confusing to use',
-            'true': 'Results feel true',
-            'inaccurate': 'Results don\'t fit me',
-            'too-long': 'Test too long',
-            'just-right': 'Test OK length'
-        };
-        
-        const quickFeedbackHtml = Object.entries(feedbackCounts)
-            .sort((a, b) => b[1] - a[1])
-            .map(([type, count]) => {
-                const percentage = totalFeedbackOptions > 0 ? Math.round((count / totalFeedbackOptions) * 100) : 0;
-                const label = feedbackLabels[type] || type.replace('-', ' ');
-                return `
-                    <div class="feedback-item">
-                        <span class="feedback-type">${label}</span>
-                        <span class="feedback-count">${count} (${percentage}%)</span>
+                
+                const totalFeedbackOptions = Object.values(feedbackCounts).reduce((sum, count) => sum + count, 0);
+                
+                // Map feedback codes to readable labels
+                const feedbackLabels = {
+                    'easy': 'Easy to use',
+                    'confusing': 'Confusing to use',
+                    'true': 'Results feel true',
+                    'inaccurate': 'Results don\'t fit me',
+                    'too-long': 'Test too long',
+                    'just-right': 'Test OK length'
+                };
+                
+                const quickFeedbackHtml = Object.entries(feedbackCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([type, count]) => {
+                        const percentage = totalFeedbackOptions > 0 ? Math.round((count / totalFeedbackOptions) * 100) : 0;
+                        const label = feedbackLabels[type] || type.replace('-', ' ');
+                        return `
+                            <div class="feedback-item">
+                                <span class="feedback-type">${label}</span>
+                                <span class="feedback-count">${count} (${percentage}%)</span>
+                            </div>
+                        `;
+                    }).join('');
+                
+                quickFeedbackEl.innerHTML = `
+                    <div class="feedback-summary">
+                        <p style="margin-bottom: 15px; color: var(--gray-medium);">
+                            <strong>${responsesWithSelections} users</strong> made ${totalFeedbackOptions} quick feedback selections
+                        </p>
+                        ${quickFeedbackHtml || '<p>No quick feedback selections yet</p>'}
                     </div>
                 `;
-            }).join('');
-        
-        quickFeedbackEl.innerHTML = `
-            <div class="feedback-summary">
-                <p style="margin-bottom: 15px; color: var(--gray-medium);">
-                    <strong>${responsesWithSelections} users</strong> made ${totalFeedbackOptions} quick feedback selections
-                </p>
-                ${quickFeedbackHtml || '<p>No quick feedback selections yet</p>'}
-            </div>
-        `;
-    }
-    
-    // 2. WRITTEN FEEDBACK SUMMARY
-    const writtenFeedbackEl = document.getElementById('writtenFeedbackContainer');
-    
-    // Filter to only items with written feedback
-    const writtenFeedbackItems = feedbackData.filter(item => 
-        item.additionalFeedback && item.additionalFeedback.trim().length > 0
-    );
-    
-    if (writtenFeedbackItems.length === 0) {
-        writtenFeedbackEl.innerHTML = '<p>No written feedback yet</p>';
-    } else {
-        const feedbackLabels = {
-            'easy': 'Easy to use',
-            'confusing': 'Confusing to use',
-            'true': 'Results feel true',
-            'inaccurate': 'Results don\'t fit me',
-            'too-long': 'Test too long',
-            'just-right': 'Test OK length'
-        };
-        
-        const writtenFeedbackWithUserInfo = writtenFeedbackItems
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-            .slice(0, 10) // Show last 10 written feedbacks
-            .map(item => {
-                const userInfo = emailData[item.sessionId] || {};
-                return {
-                    ...item,
-                    userEmail: userInfo.email || 'Not provided',
-                    userName: userInfo.firstName || 'Anonymous',
+            }
+            
+            // 2. WRITTEN FEEDBACK SUMMARY
+            const writtenFeedbackEl = document.getElementById('writtenFeedbackContainer');
+            
+            // Filter to only items with written feedback
+            const writtenFeedbackItems = feedbackData.filter(item => 
+                item.additionalFeedback && item.additionalFeedback.trim().length > 0
+            );
+            
+            if (writtenFeedbackItems.length === 0) {
+                writtenFeedbackEl.innerHTML = '<p>No written feedback yet</p>';
+            } else {
+                const feedbackLabels = {
+                    'easy': 'Easy to use',
+                    'confusing': 'Confusing to use',
+                    'true': 'Results feel true',
+                    'inaccurate': 'Results don\'t fit me',
+                    'too-long': 'Test too long',
+                    'just-right': 'Test OK length'
                 };
-            });
-        
-        const writtenHtml = writtenFeedbackWithUserInfo.map(item => {
-            const date = new Date(item.timestamp).toLocaleDateString();
-            const time = new Date(item.timestamp).toLocaleTimeString();
+                
+                const writtenFeedbackWithUserInfo = writtenFeedbackItems
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .slice(0, 10) // Show last 10 written feedbacks
+                    .map(item => {
+                        const userInfo = emailData[item.sessionId] || {};
+                        return {
+                            ...item,
+                            userEmail: userInfo.email || 'Not provided',
+                            userName: userInfo.firstName || 'Anonymous',
+                        };
+                    });
+                
+                const writtenHtml = writtenFeedbackWithUserInfo.map(item => {
+                    const date = new Date(item.timestamp).toLocaleDateString();
+                    const time = new Date(item.timestamp).toLocaleTimeString();
+                    
+                    const userDisplay = item.userEmail !== 'Not provided' 
+                        ? `${item.userName} (${item.userEmail})` 
+                        : `Anonymous User`;
+                    
+                    // Show quick selections if any
+                    const quickSelections = item.selectedOptions && item.selectedOptions.length > 0
+                        ? item.selectedOptions.map(opt => feedbackLabels[opt] || opt).join(', ')
+                        : 'No quick selections';
+                    
+                    return `
+                        <div class="detailed-feedback-item">
+                            <div class="feedback-meta">
+                                <span class="feedback-date">${date} ${time}</span>
+                                <span class="feedback-archetype">${item.archetype || 'Unknown'}</span>
+                            </div>
+                            <div style="margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dark); font-weight: 600;">
+                                <strong>User:</strong> ${userDisplay}
+                            </div>
+                            <div style="margin-bottom: 8px; font-size: 0.9rem; color: var(--blue-accent);">
+                                <strong>Quick selections:</strong> ${quickSelections}
+                            </div>
+                            <div class="feedback-text" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-style: italic;">
+                                "${item.additionalFeedback}"
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                writtenFeedbackEl.innerHTML = `
+                    <p style="margin-bottom: 15px; color: var(--gray-medium);">
+                        <strong>${writtenFeedbackItems.length} users</strong> provided written feedback
+                    </p>
+                    ${writtenHtml}
+                `;
+            }
             
-            const userDisplay = item.userEmail !== 'Not provided' 
-                ? `${item.userName} (${item.userEmail})` 
-                : `Anonymous User`;
+            // 3. OVERALL STATS FOR THE TOP SECTION
+            const feedbackStatsEl = document.getElementById('feedbackStats');
+            const totalUsers = feedbackData.length;
+            const usersWithQuickFeedback = feedbackData.filter(item => 
+                item.selectedOptions && item.selectedOptions.length > 0
+            ).length;
+            const usersWithWrittenFeedback = writtenFeedbackItems.length;
             
-            // Show quick selections if any
-            const quickSelections = item.selectedOptions && item.selectedOptions.length > 0
-                ? item.selectedOptions.map(opt => feedbackLabels[opt] || opt).join(', ')
-                : 'No quick selections';
-            
-            return `
-                <div class="detailed-feedback-item">
-                    <div class="feedback-meta">
-                        <span class="feedback-date">${date} ${time}</span>
-                        <span class="feedback-archetype">${item.archetype || 'Unknown'}</span>
+            feedbackStatsEl.innerHTML = `
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <div class="stat-card">
+                        <div class="stat-number">${totalUsers}</div>
+                        <div class="stat-label">Total Feedback</div>
                     </div>
-                    <div style="margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dark); font-weight: 600;">
-                        <strong>User:</strong> ${userDisplay}
+                    <div class="stat-card">
+                        <div class="stat-number">${usersWithQuickFeedback}</div>
+                        <div class="stat-label">Quick Selections</div>
                     </div>
-                    <div style="margin-bottom: 8px; font-size: 0.9rem; color: var(--blue-accent);">
-                        <strong>Quick selections:</strong> ${quickSelections}
-                    </div>
-                    <div class="feedback-text" style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-style: italic;">
-                        "${item.additionalFeedback}"
+                    <div class="stat-card">
+                        <div class="stat-number">${usersWithWrittenFeedback}</div>
+                        <div class="stat-label">Written Comments</div>
                     </div>
                 </div>
             `;
-        }).join('');
-        
-        writtenFeedbackEl.innerHTML = `
-            <p style="margin-bottom: 15px; color: var(--gray-medium);">
-                <strong>${writtenFeedbackItems.length} users</strong> provided written feedback
-            </p>
-            ${writtenHtml}
-        `;
-    }
-    
-    // 3. OVERALL STATS FOR THE TOP SECTION
-    const feedbackStatsEl = document.getElementById('feedbackStats');
-    const totalUsers = feedbackData.length;
-    const usersWithQuickFeedback = feedbackData.filter(item => 
-        item.selectedOptions && item.selectedOptions.length > 0
-    ).length;
-    const usersWithWrittenFeedback = writtenFeedbackItems.length;
-    
-    feedbackStatsEl.innerHTML = `
-        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-            <div class="stat-card">
-                <div class="stat-number">${totalUsers}</div>
-                <div class="stat-label">Total Feedback</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${usersWithQuickFeedback}</div>
-                <div class="stat-label">Quick Selections</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${usersWithWrittenFeedback}</div>
-                <div class="stat-label">Written Comments</div>
-            </div>
-        </div>
-    `;
-}
-    
-    // Enhanced detailed feedback section with user information
-    const detailedContainer = document.getElementById('detailedFeedbackContainer');
-    
-    if (feedbackData.length === 0) {
-        detailedContainer.innerHTML = '<p>No detailed feedback yet</p>';
-    } else {
-        // Process all feedback with user information
-        const feedbackWithUserInfo = feedbackData
-            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-            .slice(0, 20) // Show last 20
-            .map(item => {
-                // Find user info by sessionId
-                const userInfo = emailData[item.sessionId] || {};
-                return {
-                    ...item,
-                    userEmail: userInfo.email || 'Not provided',
-                    userName: userInfo.firstName || 'Anonymous',
-                    emailConsent: userInfo.emailConsent
-                };
-            });
-        
-        const feedbackLabels = {
-            'easy': 'Easy to use',
-            'confusing': 'Confusing to use',
-            'true': 'Results feel true',
-            'inaccurate': 'Results don\'t fit me',
-            'too-long': 'Test too long',
-            'just-right': 'Test OK length'
-        };
-        
-        const detailedHtml = feedbackWithUserInfo.map(item => {
-            const date = new Date(item.timestamp).toLocaleDateString();
-            const time = new Date(item.timestamp).toLocaleTimeString();
-            const selectedOptions = item.selectedOptions && item.selectedOptions.length > 0 
-                ? item.selectedOptions.map(opt => feedbackLabels[opt] || opt).join(', ')
-                : 'None selected';
-            
-            // Determine if user provided email
-            const userDisplay = item.userEmail !== 'Not provided' 
-                ? `${item.userName} (${item.userEmail})` 
-                : `Anonymous User (${item.sessionId.substring(0, 8)}...)`;
-            
-            const hasWrittenFeedback = item.additionalFeedback && item.additionalFeedback.trim();
-            
-            return `
-                <div class="detailed-feedback-item">
-                    <div class="feedback-meta">
-                        <span class="feedback-date">${date} ${time}</span>
-                        <span class="feedback-archetype">${item.archetype || 'Unknown'}</span>
-                    </div>
-                    <div style="margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dark); font-weight: 600;">
-                        <strong>User:</strong> ${userDisplay}
-                    </div>
-                    <div style="margin-bottom: 8px; font-size: 0.9rem; color: var(--blue-accent);">
-                        <strong>Selected:</strong> ${selectedOptions}
-                    </div>
-                    ${hasWrittenFeedback ? `
-                        <div class="feedback-text">"${item.additionalFeedback}"</div>
-                    ` : `
-                        <div style="font-style: italic; color: var(--gray-medium);">No written feedback provided</div>
-                    `}
-                </div>
-            `;
-        }).join('');
-        
-        detailedContainer.innerHTML = detailedHtml;
-    }
-}
+        }
 
-// NEW FUNCTION: Add this new function to create a comprehensive feedback table
-function showDetailedFeedbackTable() {
-    // Create a modal or new section for detailed table view
-    const modalHtml = `
-        <div class="modal-overlay" id="feedbackModal" style="
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.5); z-index: 1000; display: flex; 
-            align-items: center; justify-content: center; padding: 20px;
-        ">
-            <div style="
-                background: white; border-radius: 10px; padding: 20px; 
-                max-width: 90vw; max-height: 90vh; overflow: auto;
-            ">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Detailed Feedback Analysis</h2>
-                    <button onclick="closeFeedbackModal()" style="
-                        background: none; border: none; font-size: 24px; cursor: pointer;
-                    ">&times;</button>
+        function showDetailedFeedbackTable() {
+            // Create a modal or new section for detailed table view
+            const modalHtml = `
+                <div class="modal-overlay" id="feedbackModal" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.5); z-index: 1000; display: flex; 
+                    align-items: center; justify-content: center; padding: 20px;
+                ">
+                    <div style="
+                        background: white; border-radius: 10px; padding: 20px; 
+                        max-width: 90vw; max-height: 90vh; overflow: auto;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2>Detailed Feedback Analysis</h2>
+                            <button onclick="closeFeedbackModal()" style="
+                                background: none; border: none; font-size: 24px; cursor: pointer;
+                            ">&times;</button>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: var(--primary-orange);">
+                                        <th style="padding: 12px; border: 1px solid var(--gray-light);">Date</th>
+                                        <th style="padding: 12px; border: 1px solid var(--gray-light);">User</th>
+                                        <th style="padding: 12px; border: 1px solid var(--gray-light);">Email</th>
+                                        <th style="padding: 12px; border: 1px solid var(--gray-light);">Archetype</th>
+                                        <th style="padding: 12px; border: 1px solid var(--gray-light);">Selections</th>
+                                        <th style="padding: 12px; border: 1px solid var(--gray-light);">Written Feedback</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="feedbackTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: var(--primary-orange);">
-                                <th style="padding: 12px; border: 1px solid var(--gray-light);">Date</th>
-                                <th style="padding: 12px; border: 1px solid var(--gray-light);">User</th>
-                                <th style="padding: 12px; border: 1px solid var(--gray-light);">Email</th>
-                                <th style="padding: 12px; border: 1px solid var(--gray-light);">Archetype</th>
-                                <th style="padding: 12px; border: 1px solid var(--gray-light);">Selections</th>
-                                <th style="padding: 12px; border: 1px solid var(--gray-light);">Written Feedback</th>
-                            </tr>
-                        </thead>
-                        <tbody id="feedbackTableBody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Add modal to page
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    
-    // Populate table
-    const tbody = document.getElementById('feedbackTableBody');
-    const feedbackLabels = {
-        'easy': 'Easy to use',
-        'confusing': 'Confusing to use',
-        'true': 'Results feel true',
-        'inaccurate': 'Results don\'t fit me',
-        'too-long': 'Test too long',
-        'just-right': 'Test OK length'
-    };
-    
-    const tableRows = feedbackData
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .map(item => {
-            const userInfo = emailData[item.sessionId] || {};
-            const date = new Date(item.timestamp).toLocaleDateString();
-            const userName = userInfo.firstName || 'Anonymous';
-            const userEmail = userInfo.email || 'Not provided';
-            const selectedOptions = item.selectedOptions && item.selectedOptions.length > 0 
-                ? item.selectedOptions.map(opt => feedbackLabels[opt] || opt).join(', ')
-                : 'None';
-            const writtenFeedback = item.additionalFeedback || 'None';
-            
-            return `
-                <tr>
-                    <td style="padding: 8px; border: 1px solid var(--gray-light);">${date}</td>
-                    <td style="padding: 8px; border: 1px solid var(--gray-light);">${userName}</td>
-                    <td style="padding: 8px; border: 1px solid var(--gray-light);">${userEmail}</td>
-                    <td style="padding: 8px; border: 1px solid var(--gray-light);">${item.archetype || 'Unknown'}</td>
-                    <td style="padding: 8px; border: 1px solid var(--gray-light);">${selectedOptions}</td>
-                    <td style="padding: 8px; border: 1px solid var(--gray-light); max-width: 300px; word-wrap: break-word;">${writtenFeedback}</td>
-                </tr>
             `;
-        }).join('');
-    
-    tbody.innerHTML = tableRows;
-}
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Populate table
+            const tbody = document.getElementById('feedbackTableBody');
+            const feedbackLabels = {
+                'easy': 'Easy to use',
+                'confusing': 'Confusing to use',
+                'true': 'Results feel true',
+                'inaccurate': 'Results don\'t fit me',
+                'too-long': 'Test too long',
+                'just-right': 'Test OK length'
+            };
+            
+            const tableRows = feedbackData
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .map(item => {
+                    const userInfo = emailData[item.sessionId] || {};
+                    const date = new Date(item.timestamp).toLocaleDateString();
+                    const userName = userInfo.firstName || 'Anonymous';
+                    const userEmail = userInfo.email || 'Not provided';
+                    const selectedOptions = item.selectedOptions && item.selectedOptions.length > 0 
+                        ? item.selectedOptions.map(opt => feedbackLabels[opt] || opt).join(', ')
+                        : 'None';
+                    const writtenFeedback = item.additionalFeedback || 'None';
+                    
+                    return `
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid var(--gray-light);">${date}</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-light);">${userName}</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-light);">${userEmail}</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-light);">${item.archetype || 'Unknown'}</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-light);">${selectedOptions}</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-light); max-width: 300px; word-wrap: break-word;">${writtenFeedback}</td>
+                        </tr>
+                    `;
+                }).join('');
+            
+            tbody.innerHTML = tableRows;
+        }
 
-function closeFeedbackModal() {
-    const modal = document.getElementById('feedbackModal');
-    if (modal) {
-        modal.remove();
-    }
-}
+        function closeFeedbackModal() {
+            const modal = document.getElementById('feedbackModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
         
         function updateStatistics() {
             // Total responses
@@ -1130,12 +1061,14 @@ function closeFeedbackModal() {
                 }
             }, 2000);
         });
+        
+        // Make functions globally available
         window.logout = logout;
-window.exportAllData = exportAllData;
-window.exportEmailList = exportEmailList;
-window.exportSummaryStats = exportSummaryStats;
-window.showDetailedFeedbackTable = showDetailedFeedbackTable;
-window.closeFeedbackModal = closeFeedbackModal;
+        window.exportAllData = exportAllData;
+        window.exportEmailList = exportEmailList;
+        window.exportSummaryStats = exportSummaryStats;
+        window.showDetailedFeedbackTable = showDetailedFeedbackTable;
+        window.closeFeedbackModal = closeFeedbackModal;
     </script>
 </body>
 </html>
